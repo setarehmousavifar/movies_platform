@@ -125,6 +125,7 @@ class Review(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مرتبط با نقد
     rating = models.PositiveIntegerField(verbose_name="امتیاز")  # امتیاز داده شده (مثلاً از 1 تا 5)
     review_text = models.TextField(null=True, blank=True, verbose_name="متن نقد")  # متن نقد
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
     review_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ نقد")  # تاریخ ثبت نقد
 
     def __str__(self):

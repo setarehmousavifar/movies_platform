@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>جستجوی پیشرفته</h1>
+<form method="get">
+    <input type="text" name="query" placeholder="عنوان یا توضیحات" value="{{ query }}">
+    <select name="genre">
+        <option value="">ژانر</option>
+        {% for genre in genres %}
+        <option value="{{ genre.genre_name }}" {% if genre.genre_name == selected_genre %}selected{% endif %}>
+            {{ genre.genre_name }}
+        </option>
+        {% endfor %}
+    </select>
+    <input type="text" name="language" placeholder="زبان" value="{{ selected_language }}">
+    <input type="number" name="min_rating" placeholder="حداقل امتیاز" value="{{ selected_min_rating }}">
+    <button type="submit">جستجو</button>
+</form>
+<ul>
+    {% for movie in movies %}
+    <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
+    {% empty %}
+    <p>هیچ نتیجه‌ای یافت نشد.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

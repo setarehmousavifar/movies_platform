@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>فیلم‌های ژانر {{ genre.genre_name }}</h1>
+<ul>
+    {% for movie in movies %}
+    <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
+    {% empty %}
+    <p>فیلمی یافت نشد.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>لیست علاقه‌مندی‌ها</h1>
+<ul>
+    {% for favorite in favorites %}
+    <li>
+        <a href="{% url 'movie_detail' favorite.movie.id %}">{{ favorite.movie.title }}</a>
+        <a href="{% url 'remove_from_favorites' favorite.movie.id %}" class="btn btn-danger">حذف</a>
+    </li>
+    {% empty %}
+    <p>هیچ فیلمی در لیست علاقه‌مندی‌های شما نیست.</p>
+    {% endfor %}
+</ul>
+{% endblock %}
