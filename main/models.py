@@ -14,8 +14,8 @@ class User(AbstractUser):
         return self.username
 
     class Meta:
-        verbose_name = "کاربر"
-        verbose_name_plural = "کاربران"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
 
 # مدل رده‌بندی سنی فیلم‌ها
