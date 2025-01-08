@@ -1,1 +1,43 @@
+{% extends 'base.html' %}
 {% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Welcome to Movie Platform!</h1>
+    <p class="text-center"></p>
+
+    <!-- بخش فیلم‌های جدید -->
+    <h2>New Movies</h2>
+    <div class="row">
+        {% for movie in new_movies %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <img src="{{ movie.poster_url }}" class="card-img-top" alt="{{ movie.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">Released : {{ movie.release_date }}</p>
+                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">view</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- بخش فیلم‌های محبوب -->
+    <h2>Popular Movies</h2>
+    <div class="row">
+        {% for movie in popular_movies %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <img src="{{ movie.poster_url }}" class="card-img-top" alt="{{ movie.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">views: {{ movie.view_count }}</p>
+                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">view</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

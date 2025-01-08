@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>فیلم‌های ژانر {{ genre.genre_name }}</h1>
+<h1>Movies in {{ genre.genre_name }}</h1>
 <ul>
     {% for movie in movies %}
-    <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
-    {% empty %}
-    <p>فیلمی یافت نشد.</p>
+        <li>
+            <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a>
+        </li>
     {% endfor %}
 </ul>
+<a href="{% url 'genre_list' %}">Back to Genres</a>
 {% endblock %}

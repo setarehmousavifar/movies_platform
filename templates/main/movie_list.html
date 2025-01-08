@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>لیست فیلم‌ها</h1>
+<h1>Movie List</h1>
 <ul>
     {% for movie in movies %}
-    <li>{{ movie.title }}</li>
+        <li>
+            <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a>
+            ({{ movie.release_date }})
+        </li>
     {% endfor %}
 </ul>
 {% endblock %}

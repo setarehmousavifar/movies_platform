@@ -1,26 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>جستجوی پیشرفته</h1>
+<h1>Advanced Search</h1>
 <form method="get">
-    <input type="text" name="query" placeholder="عنوان یا توضیحات" value="{{ query }}">
-    <select name="genre">
-        <option value="">ژانر</option>
+    <label for="query">Search:</label>
+    <input type="text" name="query" id="query" placeholder="Search by title or description">
+    
+    <label for="genre">Genre:</label>
+    <select name="genre" id="genre">
+        <option value="">-- All Genres --</option>
         {% for genre in genres %}
-        <option value="{{ genre.genre_name }}" {% if genre.genre_name == selected_genre %}selected{% endif %}>
-            {{ genre.genre_name }}
-        </option>
+            <option value="{{ genre.genre_name }}">{{ genre.genre_name }}</option>
         {% endfor %}
     </select>
-    <input type="text" name="language" placeholder="زبان" value="{{ selected_language }}">
-    <input type="number" name="min_rating" placeholder="حداقل امتیاز" value="{{ selected_min_rating }}">
-    <button type="submit">جستجو</button>
+    
+    <label for="language">Language:</label>
+    <input type="text" name="language" id="language" value="{{ language }}">
+    
+    <label for="min_rating">Minimum Rating:</label>
+    <input type="number" step="0.1" name="min_rating" id="min_rating" placeholder="Enter rating">
+
+    <button type="submit">Search</button>
 </form>
-<ul>
-    {% for movie in movies %}
-    <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
-    {% empty %}
-    <p>هیچ نتیجه‌ای یافت نشد.</p>
-    {% endfor %}
-</ul>
+
+    <!-- نمایش نتایج جستجو -->
+    {% if movies %}
+        <h2>Results:</h2>
+        <ul>
+            {% for movie in movies %}
+                <li>
+                    <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a> - Rating: {{ movie.overall_rating }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No movies found.</p>
+    {% endif %}
 {% endblock %}

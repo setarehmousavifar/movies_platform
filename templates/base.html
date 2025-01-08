@@ -12,16 +12,18 @@
         <!-- هدر سایت (منو و ناوبری) -->
         {% block header %}
         <nav>
-            <a href="{% url 'home' %}">خانه</a>
-            <a href="{% url 'movie_list' %}">فیلم‌ها</a>
-            <a href="{% url 'genre_list' %}">ژانرها</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}">پروفایل</a>
-                <a href="{% url 'logout' %}">خروج</a>
-            {% else %}
-                <a href="{% url 'login' %}">ورود</a>
-                <a href="{% url 'register' %}">ثبت‌نام</a>
-            {% endif %}
+            <ul>
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'movie_list' %}">Movies</a>
+                <a href="{% url 'genre_list' %}">Genres</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                {% endif %}
+            <ul>
         </nav>
         {% endblock %}
     </header>

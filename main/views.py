@@ -18,7 +18,7 @@ def register_user(request):
             user.set_password(form.cleaned_data['password'])  # رمز عبور را هش کنید
             user.save()
             login(request, user)  # ورود خودکار پس از ثبت‌نام
-            messages.success(request, "ثبت‌نام با موفقیت انجام شد!")
+            messages.success(request, "Registration successful. Welcome!")
             return redirect('home')  # هدایت به صفحه اصلی یا هر صفحه دیگر
     else:
         form = UserRegistrationForm()

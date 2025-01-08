@@ -1,26 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
-<h1>فیلتر فیلم‌ها</h1>
+<h1>Filter Movies</h1>
+
+<!-- فرم فیلتر -->
 <form method="get">
-    <select name="genre">
-        <option value="">ژانر</option>
+    <label for="genre">Genre:</label>
+    <select name="genre" id="genre">
+        <option value="">-- Select Genre --</option>
         {% for genre in genres %}
-        <option value="{{ genre.genre_name }}" {% if genre.genre_name == selected_genre %}selected{% endif %}>
-            {{ genre.genre_name }}
-        </option>
+            <option value="{{ genre.genre_name }}" {% if selected_genre == genre.genre_name %}selected{% endif %}>
+                {{ genre.genre_name }}
+            </option>
         {% endfor %}
     </select>
-    <input type="text" name="language" placeholder="زبان" value="{{ selected_language }}">
-    <input type="number" name="min_rating" placeholder="حداقل امتیاز" value="{{ selected_min_rating }}">
-    <button type="submit">فیلتر</button>
+
+    <label for="language">Language:</label>
+    <input type="text" name="language" id="language" value="{{ selected_language }}">
+
+    <label for="min_rating">Minimum Rating:</label>
+    <input type="number" name="min_rating" id="min_rating" step="0.1" value="{{ selected_min_rating }}">
+
+    <button type="submit">Filter</button>
 </form>
+
+<!-- نمایش فیلم‌های فیلتر شده -->
 <ul>
     {% for movie in movies %}
-    <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
+        <li>
+            <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a> 
+            - Language: {{ movie.language }} 
+            - Rating: {{ movie.overall_rating }}
+        </li>
     {% empty %}
-    <p>هیچ فیلمی با شرایط انتخاب‌شده یافت نشد.</p>
+        <li>No movies found matching the criteria.</li>
     {% endfor %}
 </ul>
 {% endblock %}

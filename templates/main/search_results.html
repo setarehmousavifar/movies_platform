@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>نتایج جستجو</h1>
+<h1>Search Results</h1>
 {% if query %}
-<p>نتایج برای "{{ query }}":</p>
+<p>Results for: "{{ query }}":</p>
 <ul>
     {% for movie in movies %}
     <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
     {% empty %}
-    <p>هیچ نتیجه‌ای یافت نشد.</p>
+    <p>No Results.</p>
     {% endfor %}
 </ul>
 {% else %}
-<p>لطفاً عبارتی را جستجو کنید.</p>
+<p>Search</p>
 {% endif %}
 {% endblock %}
