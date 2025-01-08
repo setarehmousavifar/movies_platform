@@ -135,3 +135,48 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.message[:20]}..."  # نمایش خلاصه پیام
+
+
+class DownloadLink(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مربوطه
+    quality = models.CharField(max_length=20, choices=[('720p', '720p'), ('1080p', '1080p'), ('4K', '4K')], verbose_name="کیفیت")  # کیفیت فایل
+    download_url = models.URLField(verbose_name="لینک دانلود")  # لینک دانلود فایل
+    file_size = models.CharField(max_length=10, blank=True, verbose_name="حجم فایل")  # حجم فایل
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.quality} ({self.file_size})"  # نمایش عنوان فیلم، کیفیت و حجم
+
+
+class Subtitle(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مربوطه
+    language = models.CharField(max_length=50, verbose_name="زبان زیرنویس")  # زبان زیرنویس
+    subtitle_file = models.URLField(verbose_name="فایل زیرنویس")  # لینک فایل زیرنویس
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.language}"  # نمایش فیلم و زبان زیرنویس
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name="نام برچسب")  # نام برچسب (مثل کمدی، عاشقانه)
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")  # توضیحات اختیاری
+
+    def __str__(self):
+        return self.name  # نمایش نام برچسب
+
+
+class MovieTag(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مربوطه
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, verbose_name="برچسب")  # برچسب مربوطه
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.tag.name}"  # نمایش فیلم و برچسب
+
+
+class VideoQuality(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مربوطه
+    quality = models.CharField(max_length=20, choices=[('480p', '480p'), ('720p', '720p'), ('1080p', '1080p'), ('2k', '2k'), ('4K', '4K')], verbose_name="کیفیت")  # کیفیت ویدیو
+    stream_url = models.URLField(verbose_name="لینک پخش آنلاین")  # لینک پخش آنلاین
+    download_url = models.URLField(verbose_name="لینک دانلود")  # لینک دانلود
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.quality}"  # نمایش عنوان فیلم و کیفیت
