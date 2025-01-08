@@ -18,20 +18,6 @@ class User(AbstractUser):
         verbose_name_plural = "کاربران"
 
 
-class Movie(models.Model):
-    title = models.CharField(max_length=200, verbose_name="عنوان")
-    release_date = models.DateField(verbose_name="تاریخ انتشار")
-    description = models.TextField(verbose_name="توضیحات")
-    duration = models.PositiveIntegerField(verbose_name="مدت زمان (دقیقه)")
-    view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
-    poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر")
-    language = models.CharField(max_length=50, verbose_name="زبان")
-    age_rating = models.CharField(max_length=10, verbose_name="رده سنی")
-
-    def __str__(self):
-        return self.title
-
-
 # مدل مربوط به فیلم‌ها/سریال‌ها
 class Movie(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان")  # عنوان فیلم یا سریال
@@ -42,6 +28,8 @@ class Movie(models.Model):
     poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر")  # لینک پوستر فیلم/سریال
     language = models.CharField(max_length=50, verbose_name="زبان")  # زبان فیلم/سریال
     age_rating = models.CharField(max_length=10, verbose_name="رده سنی")  # رده سنی (مثلاً PG-13)
+    overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")  # امتیاز کلی فیلم/سریال (مثلاً 4.5 از 5)
+    country = models.CharField(max_length=100, verbose_name="کشور تولید")  # کشور تولیدکننده فیلم/سریال
 
     def __str__(self):
         return self.title  # نمایش عنوان به عنوان رشته نمایشی
@@ -85,3 +73,65 @@ class MovieGenre(models.Model):
         return f"{self.movie.title} - {self.genre.genre_name}"  # نمایش ژانر مرتبط با فیلم
 
 
+# مدل تراکنش‌های کیف پول
+class WalletTransaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر مربوط به تراکنش
+    transaction_type = models.CharField(max_length=50, choices=[('credit', 'شارژ'), ('debit', 'برداشت')], verbose_name="نوع تراکنش")  # نوع تراکنش (شارژ یا برداشت)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="مبلغ تراکنش")  # مبلغ تراکنش
+    transaction_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ تراکنش")  # تاریخ تراکنش
+
+    def __str__(self):
+        return f"{self.user.username} - {self.transaction_type} - {self.amount}"  # نمایش جزئیات تراکنش
+
+
+# مدل اشتراک‌ها
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر مربوط به اشتراک
+    subscription_type = models.CharField(max_length=50, choices=[('basic', 'عادی'), ('premium', 'پریمیوم')], verbose_name="نوع اشتراک")  # نوع اشتراک
+    start_date = models.DateField(verbose_name="تاریخ شروع")  # تاریخ شروع اشتراک
+    end_date = models.DateField(verbose_name="تاریخ پایان")  # تاریخ پایان اشتراک
+
+    def __str__(self):
+        return f"{self.user.username} - {self.subscription_type}"  # نمایش نوع اشتراک
+
+
+# مدل نقدها و امتیازات
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر نویسنده نقد
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مرتبط با نقد
+    rating = models.PositiveIntegerField(verbose_name="امتیاز")  # امتیاز داده شده (مثلاً از 1 تا 5)
+    review_text = models.TextField(null=True, blank=True, verbose_name="متن نقد")  # متن نقد
+    review_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ نقد")  # تاریخ ثبت نقد
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title} - {self.rating}"  # نمایش امتیاز و فیلم نقد شده
+
+
+# مدل تاریخچه تماشا
+class WatchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر تماشا کننده
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم تماشا شده
+    watch_datetime = models.DateTimeField(auto_now_add=True, verbose_name="زمان تماشا")  # زمان تماشا
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title} - {self.watch_datetime}"  # نمایش تاریخچه تماشا
+
+
+# مدل فیلم‌های محبوب
+class FavoriteMovie(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم محبوب
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"  # نمایش فیلم محبوب
+
+
+# مدل اعلان‌ها
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر دریافت کننده اعلان
+    message = models.TextField(verbose_name="پیام اعلان")  # متن پیام اعلان
+    sent_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ارسال")  # تاریخ ارسال پیام
+    is_read = models.BooleanField(default=False, verbose_name="خوانده شده")  # وضعیت خواندن اعلان
+
+    def __str__(self):
+        return f"{self.user.username} - {self.message[:20]}..."  # نمایش خلاصه پیام
