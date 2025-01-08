@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+# مدل کاربران
 class User(AbstractUser):
-    # اضافه کردن فیلدهای سفارشی
     is_premium = models.BooleanField(default=False, verbose_name="وضعیت پریمیوم")
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True, verbose_name="عکس پروفایل")
     wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0, verbose_name="موجودی کیف پول")
@@ -11,11 +11,34 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, null=True, blank=True, verbose_name="شماره تلفن")
 
     def __str__(self):
-        return self.username  # نام کاربری نمایش داده شود
+        return self.username
 
     class Meta:
         verbose_name = "کاربر"
         verbose_name_plural = "کاربران"
+
+
+# مدل رده‌بندی سنی فیلم‌ها
+class AgeRating(models.Model):
+    RATINGS = [
+        ('G', 'General Audiences (همه سنین)'),
+        ('PG', 'Parental Guidance (مشورت والدین)'),
+        ('PG-13', 'Parents Strongly Cautioned (13+ با مشورت)'),
+        ('R', 'Restricted (17+ با محدودیت)'),
+        ('NC-17', 'No Children Under 17 (غیرقابل مشاهده برای زیر 17)'),
+    ]
+
+    name = models.CharField(
+        max_length=50,
+        choices=RATINGS,
+        unique=True,
+        verbose_name="رده‌بندی سنی",
+        default='G'  # مقدار پیش‌فرض
+    )
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
+
+    def __str__(self):
+        return self.get_name_display()  # نمایش توضیحات به جای کد
 
 
 # مدل مربوط به فیلم‌ها/سریال‌ها
@@ -27,9 +50,10 @@ class Movie(models.Model):
     view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")  # تعداد بازدید
     poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر")  # لینک پوستر فیلم/سریال
     language = models.CharField(max_length=50, verbose_name="زبان")  # زبان فیلم/سریال
-    age_rating = models.CharField(max_length=10, verbose_name="رده سنی")  # رده سنی (مثلاً PG-13)
+    age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")  # امتیاز کلی فیلم/سریال (مثلاً 4.5 از 5)
     country = models.CharField(max_length=100, verbose_name="کشور تولید")  # کشور تولیدکننده فیلم/سریال
+    tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")  # رابطه چند به چند با تگ‌ها
 
     def __str__(self):
         return self.title  # نمایش عنوان به عنوان رشته نمایشی
@@ -137,6 +161,7 @@ class Notification(models.Model):
         return f"{self.user.username} - {self.message[:20]}..."  # نمایش خلاصه پیام
 
 
+# مدل لینک های دانلود
 class DownloadLink(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مربوطه
     quality = models.CharField(max_length=20, choices=[('720p', '720p'), ('1080p', '1080p'), ('4K', '4K')], verbose_name="کیفیت")  # کیفیت فایل
@@ -147,6 +172,7 @@ class DownloadLink(models.Model):
         return f"{self.movie.title} - {self.quality} ({self.file_size})"  # نمایش عنوان فیلم، کیفیت و حجم
 
 
+# مدل زیرنویس ها
 class Subtitle(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  # فیلم مربوطه
     language = models.CharField(max_length=50, verbose_name="زبان زیرنویس")  # زبان زیرنویس
@@ -156,6 +182,7 @@ class Subtitle(models.Model):
         return f"{self.movie.title} - {self.language}"  # نمایش فیلم و زبان زیرنویس
 
 
+#  مدل برچسب های فیلم
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name="نام برچسب")  # نام برچسب (مثل کمدی، عاشقانه)
     description = models.TextField(null=True, blank=True, verbose_name="توضیحات")  # توضیحات اختیاری
@@ -180,3 +207,107 @@ class VideoQuality(models.Model):
 
     def __str__(self):
         return f"{self.movie.title} - {self.quality}"  # نمایش عنوان فیلم و کیفیت
+
+
+class Reply(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, null=True, blank=True, verbose_name="نقد")  # نقد مرتبط (اختیاری)
+    parent_reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name="پاسخ اصلی")  # پاسخ اصلی
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربری که پاسخ داده است
+    reply_text = models.TextField(verbose_name="متن پاسخ")  # متن پاسخ
+    reply_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ پاسخ")  # تاریخ ارسال پاسخ
+
+    def __str__(self):
+        if self.parent_reply:
+            return f"Reply to Reply by {self.user.username}"
+        return f"Reply by {self.user.username} to {self.review.movie.title}"  # نمایش اطلاعات پاسخ
+
+
+# مدل کارگردان‌ها
+class Director(models.Model):
+    name = models.CharField(max_length=100, verbose_name="نام کارگردان")
+    birth_date = models.DateField(verbose_name="تاریخ تولد")
+    nationality = models.CharField(max_length=50, verbose_name="ملیت")
+
+    def __str__(self):
+        return self.name
+
+
+# ارتباط بین فیلم‌ها و کارگردان‌ها
+class MovieDirector(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")
+    director = models.ForeignKey(Director, on_delete=models.CASCADE, verbose_name="کارگردان")
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.director.name}"
+
+
+# مدل فصل‌های سریال‌ها
+class Season(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="سریال")
+    season_number = models.PositiveIntegerField(verbose_name="شماره فصل")
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
+
+    def __str__(self):
+        return f"{self.movie.title} - فصل {self.season_number}"
+
+
+# مدل قسمت‌های سریال‌ها
+class Episode(models.Model):
+    season = models.ForeignKey(Season, on_delete=models.CASCADE, verbose_name="فصل")
+    episode_number = models.PositiveIntegerField(verbose_name="شماره قسمت")
+    title = models.CharField(max_length=200, verbose_name="عنوان قسمت")
+    duration = models.PositiveIntegerField(verbose_name="مدت زمان (دقیقه)")
+
+    def __str__(self):
+        return f"{self.season.movie.title} - فصل {self.season.season_number} - قسمت {self.episode_number}"
+
+
+# مدل لایک‌ها
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")
+    liked = models.BooleanField(default=True, verbose_name="لایک شده")  # True برای لایک، False برای دیسلایک
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title} - {'Liked' if self.liked else 'Disliked'}"
+
+
+# مدل لیست‌های پخش کاربران
+class Playlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")
+    name = models.CharField(max_length=100, verbose_name="نام لیست پخش")
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.name}"
+
+
+# آیتم‌های موجود در لیست پخش
+class PlaylistItem(models.Model):
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, verbose_name="لیست پخش")
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")
+    added_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ اضافه شدن")
+
+    def __str__(self):
+        return f"{self.playlist.name} - {self.movie.title}"
+
+
+# مدل پیشنهادات فیلم به کاربران
+class Recommendation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")
+    recommended_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ پیشنهاد")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"
+
+# مدل ترجیحات ژانر کاربران
+class UserGenrePreference(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, verbose_name="ژانر")
+    preference_level = models.PositiveIntegerField(verbose_name="سطح علاقه (1 تا 5)")  # 1 کمترین، 5 بیشترین علاقه
+
+    def __str__(self):
+        return f"{self.user.username} - {self.genre.genre_name} - علاقه {self.preference_level}"
+    
+
