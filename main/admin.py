@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from django.contrib import admin
 from .models import (
     User, AgeRating, Movie, Genre, Actor, MovieActor, MovieGenre, 
     WalletTransaction, Subscription, Review, WatchHistory, 
@@ -10,10 +9,17 @@ from .models import (
     Recommendation, UserGenrePreference
 )
 
+from .models import Movie
+
+@admin.register(Movie)
+class MovieAdmin(admin.ModelAdmin):
+    list_display = ('title', 'release_date', 'overall_rating')
+    list_filter = ('language', 'country')
+    search_fields = ('title',)
+ 
 # ثبت مدل‌ها در پنل مدیریت
 admin.site.register(User)
 admin.site.register(AgeRating)
-admin.site.register(Movie)
 admin.site.register(Genre)
 admin.site.register(Actor)
 admin.site.register(MovieActor)

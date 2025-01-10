@@ -95,7 +95,7 @@ def movie_detail(request, pk):
 
     is_favorite = False
     if request.user.is_authenticated:
-        is_favorite = movie.favorites.filter(user=request.user).exists()
+        is_favorite = movie.favorites.filter(id=request.user.id).exists()
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)

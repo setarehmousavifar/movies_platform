@@ -48,15 +48,25 @@ class Movie(models.Model):
     description = models.TextField(verbose_name="توضیحات")  # توضیحات مربوط به فیلم/سریال
     duration = models.PositiveIntegerField(verbose_name="مدت زمان (دقیقه)")  # مدت زمان به دقیقه
     view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")  # تعداد بازدید
-    poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر")  # لینک پوستر فیلم/سریال
+    poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر (لینک)")  # لینک پوستر
+    poster_image = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="پوستر (تصویر)")  # تصویر پوستر
     language = models.CharField(max_length=50, verbose_name="زبان")  # زبان فیلم/سریال
     age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")  # امتیاز کلی فیلم/سریال (مثلاً 4.5 از 5)
     country = models.CharField(max_length=100, verbose_name="کشور تولید")  # کشور تولیدکننده فیلم/سریال
     tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")  # رابطه چند به چند با تگ‌ها
+    favorites = models.ManyToManyField(User, related_name="favorite_movies", blank=True, verbose_name="علاقه‌مندی‌ها")  # اضافه شده
 
     def __str__(self):
         return self.title  # نمایش عنوان به عنوان رشته نمایشی
+    
+    def get_poster(self):
+        # اولویت نمایش پوستر آپلود شده است. اگر موجود نبود، لینک استفاده می‌شود.
+        if self.poster_image:
+            return self.poster_image.url
+        elif self.poster_url:
+            return self.poster_url
+        return None
 
 
 # مدل مربوط به ژانرها

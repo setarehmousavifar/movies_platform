@@ -6,7 +6,7 @@ urlpatterns = [
     # General Pages
     path('', views.home, name='home'),  # صفحه اصلی
     path('movies/', views.movie_list, name='movie_list'),  # لیست فیلم‌ها
-    path('movies/<int:id>/', views.movie_detail, name='movie_detail'),  # جزئیات فیلم
+    path('movies/<int:pk>/', views.movie_detail, name='movie_detail'),  # جزئیات فیلم
 
     # Favorites
     path('favorites/add/<int:movie_id>/', views.add_to_favorites, name='add_to_favorites'),

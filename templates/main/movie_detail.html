@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <h1>{{ movie.title }}</h1>
+<img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster" style="width: 300px; height: auto;">
 <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
 <p><strong>Duration:</strong> {{ movie.duration }} minutes</p>
 <p><strong>Description:</strong> {{ movie.description }}</p>
