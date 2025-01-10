@@ -246,8 +246,7 @@ def genre_list(request):
 
 
 def series_list(request):
-    # می‌توانید لیست سریال‌ها را از دیتابیس بگیرید
-    series = []  # در صورت نیاز این را با داده‌های واقعی جایگزین کنید
+    series = Series.objects.all()
     return render(request, 'main/series_list.html', {'series': series})
 
 

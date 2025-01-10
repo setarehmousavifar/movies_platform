@@ -71,28 +71,57 @@ class Movie(models.Model):
 
 
 class Series(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Title")  # عنوان سریال
-    description = models.TextField(null=True, blank=True, verbose_name="Description")  # توضیحات سریال
-    release_date = models.DateField(null=True, blank=True, verbose_name="Release Date")  # تاریخ انتشار
-    rating = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="Rating")  # امتیاز سریال (1.0 تا 10.0)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")  # زمان ایجاد
+    title = models.CharField(max_length=200, verbose_name="عنوان سریال")
+    genres = models.ManyToManyField('Genre', related_name='series', verbose_name="ژانرها")
+    release_date = models.DateField(verbose_name="تاریخ انتشار")
+    description = models.TextField(verbose_name="توضیحات")
+    duration = models.PositiveIntegerField(verbose_name="مدت زمان هر قسمت (دقیقه)")
+    view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
+    poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر (لینک)")
+    poster_image = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="پوستر (تصویر)")
+    language = models.CharField(max_length=50, verbose_name="زبان")
+    age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
+    overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")
+    country = models.CharField(max_length=100, verbose_name="کشور تولید")
+    tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")
+    favorites = models.ManyToManyField(User, related_name="favorite_series", blank=True, verbose_name="علاقه‌مندی‌ها")
 
     def __str__(self):
         return self.title
+
+    def get_poster(self):
+        if self.poster_image:
+            return self.poster_image.url
+        elif self.poster_url:
+            return self.poster_url
+        return None
 
 
 class Animation(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان انیمیشن")
+    genres = models.ManyToManyField('Genre', related_name='animations', verbose_name="ژانرها")
     release_date = models.DateField(verbose_name="تاریخ انتشار")
-    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
-    poster = models.ImageField(upload_to='animations/', null=True, blank=True, verbose_name="پوستر")
+    description = models.TextField(verbose_name="توضیحات")
+    duration = models.PositiveIntegerField(verbose_name="مدت زمان (دقیقه)")
+    view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
+    poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر (لینک)")
+    poster_image = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="پوستر (تصویر)")
+    language = models.CharField(max_length=50, verbose_name="زبان")
+    age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
+    overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")
+    country = models.CharField(max_length=100, verbose_name="کشور تولید")
+    tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")
+    favorites = models.ManyToManyField(User, related_name="favorite_animations", blank=True, verbose_name="علاقه‌مندی‌ها")
 
     def __str__(self):
         return self.title
 
-    class Meta:
-        verbose_name = "Animation"
-        verbose_name_plural = "Animations"
+    def get_poster(self):
+        if self.poster_image:
+            return self.poster_image.url
+        elif self.poster_url:
+            return self.poster_url
+        return None
 
 
 # مدل مربوط به ژانرها

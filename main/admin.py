@@ -15,16 +15,22 @@ from .models import Movie, Series, Animation
 class MovieAdmin(admin.ModelAdmin):
     list_display = ('title', 'release_date', 'overall_rating')
     list_filter = ('language', 'country')
-    search_fields = ('title',)
+    search_fields = ('title', 'description')
+    filter_horizontal = ('genres',)
+
+@admin.register(Animation)
+class AnimationAdmin(admin.ModelAdmin):
+    list_display = ['title', 'release_date', 'overall_rating']
+    list_filter = ('language', 'country')
+    search_fields = ['title', 'description']
     filter_horizontal = ('genres',)
 
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
-    list_display = ('title', 'rating', 'release_date')
-
-@admin.register(Animation)
-class AnimationAdmin(admin.ModelAdmin):
-    list_display = ['title', 'release_date']
+    list_display = ['title', 'release_date', 'overall_rating']
+    list_filter = ('language', 'country')
+    search_fields = ['title', 'description']
+    filter_horizontal = ('genres',)
 
 # ثبت مدل‌ها در پنل مدیریت
 admin.site.register(User)
