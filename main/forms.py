@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, Review
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from .models import Profile
 
 User = get_user_model()
 
@@ -11,7 +13,7 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'confirm_password']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password']
         labels = {
             'username': "Username",
             'email': "Email",
@@ -29,15 +31,30 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
+    phone_number = forms.CharField(max_length=15, required=False, label="Phone Number")
+    profile_picture = forms.ImageField(required=False, label="Profile Picture")
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'profile_picture', 'phone_number']
+        fields = ['username', 'first_name', 'last_name', 'email']
         labels = {
             'username': "Username",
+            'first_name': 'First Name',
+            'last_name': 'Last Name',
             'email': "Email",
-            'profile_picture': "Profile Picture",
-            'phone_number': "Phone Number",
         }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.phone_number = self.cleaned_data.get('phone_number')
+        if self.cleaned_data.get('profile_picture'):
+            profile.profile_picture = self.cleaned_data.get('profile_picture')
+        if commit:
+            user.save()
+            profile.save()
+        return user
+
 
 
 class ReviewForm(forms.ModelForm):

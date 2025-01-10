@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import User, Movie, Review, Genre, FavoriteMovie
 from django.db.models import Q, Avg
 from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm
-
+from .models import Profile
 
 # ========================
 # ثبت‌نام کاربر
@@ -30,12 +30,13 @@ def register_user(request):
 # ========================
 @login_required
 def profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=request.user)
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, "پروفایل شما با موفقیت به‌روزرسانی شد!")
-            return redirect('profile')  # بازگشت به پروفایل بعد از ذخیره
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect('profile')  # Redirect to the profile page after saving
     else:
         form = ProfileUpdateForm(instance=request.user)
 

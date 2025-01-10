@@ -312,3 +312,12 @@ class UserGenrePreference(models.Model):
         return f"{self.user.username} - {self.genre.genre_name} - علاقه {self.preference_level}"
     
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True, null=True)  # توضیحات کوتاه کاربر
+    birth_date = models.DateField(blank=True, null=True)  # تاریخ تولد
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
