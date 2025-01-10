@@ -81,6 +81,20 @@ class Series(models.Model):
         return self.title
 
 
+class Animation(models.Model):
+    title = models.CharField(max_length=200, verbose_name="عنوان انیمیشن")
+    release_date = models.DateField(verbose_name="تاریخ انتشار")
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
+    poster = models.ImageField(upload_to='animations/', null=True, blank=True, verbose_name="پوستر")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Animation"
+        verbose_name_plural = "Animations"
+
+
 # مدل مربوط به ژانرها
 class Genre(models.Model):
     genre_name = models.CharField(max_length=100, verbose_name="نام ژانر")  # نام ژانر (مثلاً اکشن)

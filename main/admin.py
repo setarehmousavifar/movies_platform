@@ -9,7 +9,7 @@ from .models import (
     Recommendation, UserGenrePreference
 )
 
-from .models import Movie, Series
+from .models import Movie, Series, Animation
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
@@ -21,6 +21,10 @@ class MovieAdmin(admin.ModelAdmin):
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
     list_display = ('title', 'rating', 'release_date')
+
+@admin.register(Animation)
+class AnimationAdmin(admin.ModelAdmin):
+    list_display = ['title', 'release_date']
 
 # ثبت مدل‌ها در پنل مدیریت
 admin.site.register(User)

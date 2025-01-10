@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .models import User, Movie, Review, Genre, FavoriteMovie, Profile, Watchlist, Series
+from .models import User, Movie, Review, Genre, FavoriteMovie, Profile, Watchlist, Series, Animation
 from django.db.models import Q, Avg
 from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm
 
@@ -252,13 +252,9 @@ def series_list(request):
 
 
 def animation_list(request):
-    # در اینجا می‌توانید لیست انیمیشن‌ها را از دیتابیس بگیرید
-    animations = []  # در صورت نیاز این را با داده‌های واقعی جایگزین کنید
+    animations = Animation.objects.all()
     return render(request, 'main/animation_list.html', {'animations': animations})
 
-
-from django.shortcuts import render
-from .models import Movie
 
 def top_movies(request):
     # فرض کنید محبوب‌ترین فیلم‌ها را براساس تعداد بازدید یا امتیاز مرتب می‌کنید
