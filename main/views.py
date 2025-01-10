@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .models import User, Movie, Review, Genre, FavoriteMovie
 from django.db.models import Q, Avg
@@ -20,6 +20,8 @@ def register_user(request):
             login(request, user)  # ورود خودکار پس از ثبت‌نام
             messages.success(request, "Registration successful. Welcome!")
             return redirect('home')  # هدایت به صفحه اصلی یا هر صفحه دیگر
+        else:
+            messages.error(request, "There was an error with your registration. Please try again.")
     else:
         form = UserRegistrationForm()
 
@@ -41,6 +43,26 @@ def profile_view(request):
         form = ProfileUpdateForm(instance=request.user)
 
     return render(request, 'main/profile.html', {'form': form})
+
+
+# ========================
+# لاگ این
+# ========================
+def custom_login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "You have logged in successfully!")
+            return redirect('home')  # یا هر صفحه‌ای که می‌خواهی کاربر پس از ورود منتقل شود
+        else:
+            messages.error(request, "Invalid username or password.")
+            return redirect('login')
+    else:
+        return render(request, 'main/login.html')
+
 
 # ========================
 # لاگ‌اوت

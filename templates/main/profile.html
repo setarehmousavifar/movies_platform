@@ -1,20 +1,42 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Profile</h1>
+<div class="container mt-3">
+    <h1>Profile</h1>
 
-<!-- نمایش پیام‌ها -->
-{% if messages %}
-    <ul>
+    <!-- Toast message -->
+    {% if messages %}
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1055;">
         {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <div class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Notification</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                {{ message }}
+            </div>
+        </div>
         {% endfor %}
-    </ul>
-{% endif %}
+    </div>
+    {% endif %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update Profile</button>
-</form>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+</div>
+
+<!-- JavaScript برای فعال کردن Toast -->
+<script>
+    // فعال کردن تمامی Toast‌ها
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElements = document.querySelectorAll('.toast');
+        toastElements.forEach(function (toastElement) {
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        });
+    });
+</script>
 {% endblock %}
