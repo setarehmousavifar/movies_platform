@@ -70,6 +70,17 @@ class Movie(models.Model):
         return None
 
 
+class Series(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Title")  # عنوان سریال
+    description = models.TextField(null=True, blank=True, verbose_name="Description")  # توضیحات سریال
+    release_date = models.DateField(null=True, blank=True, verbose_name="Release Date")  # تاریخ انتشار
+    rating = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="Rating")  # امتیاز سریال (1.0 تا 10.0)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")  # زمان ایجاد
+
+    def __str__(self):
+        return self.title
+
+
 # مدل مربوط به ژانرها
 class Genre(models.Model):
     genre_name = models.CharField(max_length=100, verbose_name="نام ژانر")  # نام ژانر (مثلاً اکشن)
@@ -332,3 +343,24 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Category Name")
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+    
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="User")  # کاربر
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="Movie")  # فیلم
+    added_date = models.DateTimeField(auto_now_add=True, verbose_name="Date Added")  # تاریخ اضافه شدن
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"
+
+    class Meta:
+        unique_together = ('user', 'movie')  # یک فیلم نمی‌تواند بیش از یک بار در واچ‌لیست کاربر باشد
+        verbose_name = "Watchlist Item"
+        verbose_name_plural = "Watchlist Items"

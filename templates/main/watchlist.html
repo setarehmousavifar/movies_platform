@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>Your Watchlist</h1>
+{% if watchlist %}
+    <ul>
+        {% for item in watchlist %}
+            <li>
+                <a href="{% url 'movie_detail' item.movie.id %}">{{ item.movie.title }}</a>
+                <form action="{% url 'remove_from_watchlist' item.movie.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Your watchlist is empty. Add some movies to watch later!</p>
+{% endif %}
+{% endblock %}

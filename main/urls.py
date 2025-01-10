@@ -7,6 +7,17 @@ urlpatterns = [
     path('', views.home, name='home'),  # صفحه اصلی
     path('movies/', views.movie_list, name='movie_list'),  # لیست فیلم‌ها
     path('movies/<int:pk>/', views.movie_detail, name='movie_detail'),  # جزئیات فیلم
+    path('series/', views.series_list, name='series_list'),
+    path('animations/', views.animation_list, name='animation_list'),
+    path('top-movies/', views.top_movies, name='top_movies'),
+    path('top-series/', views.top_series, name='top_series'),
+    
+    path('subscription-settings/', views.subscription_settings, name='subscription_settings'),
+
+    # Watchlist 
+    path('watchlist/', views.watchlist_view, name='watchlist'),
+    path('watchlist/add/<int:movie_id>/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('watchlist/remove/<int:movie_id>/', views.remove_from_watchlist, name='remove_from_watchlist'),
 
     # Favorites
     path('favorites/add/<int:movie_id>/', views.add_to_favorites, name='add_to_favorites'),
@@ -14,7 +25,7 @@ urlpatterns = [
     path('favorites/', views.favorites_list, name='favorites_list'),
 
      # Search and Filters
-    path('search/', views.search_movies, name='search_movies'),
+    path('search/', views.search, name='search'),
     path('advanced-search/', views.advanced_search, name='advanced_search'),  # جستجوی پیشرفته
     path('filter/', views.filter_movies, name='filter_movies'),
 

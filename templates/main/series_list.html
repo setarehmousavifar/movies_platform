@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series List</title>
+</head>
+<body>
+    <h1>List of Series</h1>
+    {% if series %}
+        <ul>
+            {% for item in series %}
+                <li>{{ item.title }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No series available.</p>
+    {% endif %}
+</body>
+</html>

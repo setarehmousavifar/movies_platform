@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation List</title>
+</head>
+<body>
+    <h1>List of Animations</h1>
+    {% if animations %}
+        <ul>
+            {% for animation in animations %}
+                <li>{{ animation.title }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No animations available.</p>
+    {% endif %}
+</body>
+</html>

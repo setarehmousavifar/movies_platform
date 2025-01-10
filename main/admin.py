@@ -9,7 +9,7 @@ from .models import (
     Recommendation, UserGenrePreference
 )
 
-from .models import Movie
+from .models import Movie, Series
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
@@ -17,7 +17,11 @@ class MovieAdmin(admin.ModelAdmin):
     list_filter = ('language', 'country')
     search_fields = ('title',)
     filter_horizontal = ('genres',)
- 
+
+@admin.register(Series)
+class SeriesAdmin(admin.ModelAdmin):
+    list_display = ('title', 'rating', 'release_date')
+
 # ثبت مدل‌ها در پنل مدیریت
 admin.site.register(User)
 admin.site.register(AgeRating)

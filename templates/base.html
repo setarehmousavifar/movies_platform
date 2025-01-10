@@ -12,58 +12,87 @@
 </head>
 <body>
     <header>
-        <!-- هدر سایت (منو و ناوبری) -->
-        {% block header %}
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'home' %}">Movie Platform</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'movie_list' %}">Movies</a>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <!-- Categories Menu -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                                <li class="dropdown-header">Sections</li>
+                                <li><a class="dropdown-item" href="{% url 'movie_list' %}">Movies</a></li>
+                                <li><a class="dropdown-item" href="{% url 'series_list' %}">Series</a></li>
+                                <li><a class="dropdown-item" href="{% url 'animation_list' %}">Animations</a></li>
+                                <li><a class="dropdown-item" href="{% url 'top_movies' %}">Top Movies</a></li>
+                                <li><a class="dropdown-item" href="{% url 'top_series' %}">Top Series</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="dropdown-header">Genres</li>
+                                {% for genre in genres %}
+                                    <li><a class="dropdown-item" href="{% url 'movies_by_genre' genre.id %}">{{ genre.genre_name }}</a></li>
+                                {% empty %}
+                                    <li><a class="dropdown-item disabled">No genres available</a></li>
+                                {% endfor %}
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'genre_list' %}">Genres</a>
-                        </li>
+                    </ul>
+
+                    <!-- Search Form -->
+                    <form class="d-flex ms-auto" action="{% url 'search' %}" method="get">
+                        <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
+                        <button class="btn btn-outline-light" type="submit">Search</button>
+                    </form>
+
+                    <!-- User Menu -->
+                    <ul class="navbar-nav ms-3">
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button class="btn btn-link nav-link" type="submit">Logout</button>
-                            </form>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'favorites_list' %}">Favorites</a></li>
+                                <li><a class="dropdown-item" href="{% url 'watchlist' %}">Watchlist</a></li>
+                                <li><a class="dropdown-item" href="{% url 'subscription_settings' %}">Subscription</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
                         </li>
                         {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
-        
-        {% endblock %}
     </header>
     <main>
         {% block content %}
-        <!-- محتوای اصلی صفحات اینجا قرار می‌گیرد -->
+        <!-- Main content -->
         {% endblock %}
     </main>
-    <footer>
-        <!-- فوتر سایت -->
+    <footer class="bg-dark text-light text-center py-3">
         {% block footer %}
         <p>© 2025 Movie Platform. All rights reserved.</p>
         {% endblock %}
     </footer>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

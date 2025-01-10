@@ -2,10 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .models import User, Movie, Review, Genre, FavoriteMovie
+from .models import User, Movie, Review, Genre, FavoriteMovie, Profile, Watchlist, Series
 from django.db.models import Q, Avg
 from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm
-from .models import Profile
 
 # ========================
 # ثبت‌نام کاربر
@@ -154,9 +153,9 @@ def favorites_list(request):
 # ========================
 # جستجوی ساده
 # ========================
-def search_movies(request):
+def search(request):
     query = request.GET.get('q', '')
-    movies = Movie.objects.filter(Q(title__icontains=query) | Q(language__icontains=query)) if query else []
+    movies = Movie.objects.filter(Q(title__icontains=query)) if query else []
     return render(request, 'main/search_results.html', {'movies': movies, 'query': query})
 
 
@@ -244,3 +243,66 @@ def filter_movies(request):
 def genre_list(request):
     genres = Genre.objects.all()
     return render(request, 'main/genre_list.html', {'genres': genres})
+
+
+def series_list(request):
+    # می‌توانید لیست سریال‌ها را از دیتابیس بگیرید
+    series = []  # در صورت نیاز این را با داده‌های واقعی جایگزین کنید
+    return render(request, 'main/series_list.html', {'series': series})
+
+
+def animation_list(request):
+    # در اینجا می‌توانید لیست انیمیشن‌ها را از دیتابیس بگیرید
+    animations = []  # در صورت نیاز این را با داده‌های واقعی جایگزین کنید
+    return render(request, 'main/animation_list.html', {'animations': animations})
+
+
+from django.shortcuts import render
+from .models import Movie
+
+def top_movies(request):
+    # فرض کنید محبوب‌ترین فیلم‌ها را براساس تعداد بازدید یا امتیاز مرتب می‌کنید
+    top_movies = Movie.objects.order_by('-rating')[:10]  # این خط بسته به مدل شما ممکن است تغییر کند
+    return render(request, 'main/top_movies.html', {'top_movies': top_movies})
+
+
+def top_series(request):
+    # سریال‌ها را بر اساس امتیاز مرتب کنید
+    top_series = Series.objects.order_by('-rating')[:10]
+    return render(request, 'main/top_series.html', {'top_series': top_series})
+
+
+def add_to_watchlist(request, movie_id):
+    if request.user.is_authenticated:
+        movie = get_object_or_404(Movie, id=movie_id)
+        watchlist_item, created = Watchlist.objects.get_or_create(user=request.user, movie=movie)
+        if created:
+            message = f"{movie.title} was added to your watchlist."
+        else:
+            message = f"{movie.title} is already in your watchlist."
+    else:
+        message = "You need to log in to manage your watchlist."
+    return redirect('watchlist')
+
+
+def remove_from_watchlist(request, movie_id):
+    if request.user.is_authenticated:
+        movie = get_object_or_404(Movie, id=movie_id)
+        Watchlist.objects.filter(user=request.user, movie=movie).delete()
+        message = f"{movie.title} was removed from your watchlist."
+    else:
+        message = "You need to log in to manage your watchlist."
+    return redirect('watchlist')
+
+
+def watchlist_view(request):
+    if request.user.is_authenticated:
+        watchlist = Watchlist.objects.filter(user=request.user).select_related('movie')
+    else:
+        watchlist = []
+    return render(request, 'main/watchlist.html', {'watchlist': watchlist})
+
+
+
+def subscription_settings(request):
+    return render(request, 'main/subscription_settings.html')
