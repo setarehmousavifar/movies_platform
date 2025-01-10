@@ -44,6 +44,7 @@ class AgeRating(models.Model):
 # مدل مربوط به فیلم‌ها/سریال‌ها
 class Movie(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان")  # عنوان فیلم یا سریال
+    genres = models.ManyToManyField('Genre', related_name='movies', verbose_name="ژانرها")  # رابطه چند به چند با ژانرها
     release_date = models.DateField(verbose_name="تاریخ انتشار")  # تاریخ انتشار
     description = models.TextField(verbose_name="توضیحات")  # توضیحات مربوط به فیلم/سریال
     duration = models.PositiveIntegerField(verbose_name="مدت زمان (دقیقه)")  # مدت زمان به دقیقه

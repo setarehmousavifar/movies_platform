@@ -97,6 +97,10 @@ def movie_detail(request, pk):
     if request.user.is_authenticated:
         is_favorite = movie.favorites.filter(id=request.user.id).exists()
 
+    # افزایش تعداد بازدیدها
+    movie.view_count += 1
+    movie.save()
+    
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -120,6 +124,7 @@ def movie_detail(request, pk):
         'reviews': reviews,
         'form': form,
         'is_favorite': is_favorite,
+        'genres': movie.genres.all(), 
     })
 
 
@@ -192,8 +197,8 @@ def advanced_search(request):
 # نمایش فیلم‌ها بر اساس ژانر
 # ========================
 def movies_by_genre(request, genre_id):
-    genre = get_object_or_404(Genre, id=genre_id)
-    movies = genre.movie_set.all()
+    genre = get_object_or_404(Genre, pk=genre_id)
+    movies = genre.movies.all()
     return render(request, 'main/movies_by_genre.html', {'genre': genre, 'movies': movies})
 
 

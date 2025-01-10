@@ -16,6 +16,7 @@ class MovieAdmin(admin.ModelAdmin):
     list_display = ('title', 'release_date', 'overall_rating')
     list_filter = ('language', 'country')
     search_fields = ('title',)
+    filter_horizontal = ('genres',)
  
 # ثبت مدل‌ها در پنل مدیریت
 admin.site.register(User)
