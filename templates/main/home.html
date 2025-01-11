@@ -23,6 +23,22 @@
         {% endfor %}
     </div>
 
+    <h2>New Animations</h2>
+    <div class="row">
+       {% for animation in new_animations %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{ animation.get_poster }}" alt="{{ animation.title }} poster" style="width: 150px; height: auto;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ animation.title }}</h5>
+                    <p class="card-text">Released : {{ animation.release_date }}</p>
+                    <a href="{% url 'animation_detail' animation.id %}" class="btn btn-primary">view</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
     <!-- بخش فیلم‌های محبوب -->
     <h2>Popular Movies</h2>
     <div class="row">

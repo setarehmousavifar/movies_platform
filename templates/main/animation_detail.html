@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>{{ animation.title }}</h1>
+<img src="{{ animation.get_poster }}" alt="{{ animation.title }} poster" style="width: 160px; height: auto;">
+<form action="{% url 'add_to_watchlist' animation.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+</form>
+<p><strong>Release Date:</strong> {{ animation.release_date }}</p>
+<p><strong>Genres:</strong>
+    {% for genre in genres %}
+        {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+        No genres available.
+    {% endfor %}
+</p>
+<p><strong>Age Rating:</strong> {{ animation.age_rating.name }}</p>
+<p><strong>Duration:</strong> {{ animation.duration }} minutes</p>
+<p><strong>Description:</strong> {{ animation.description }}</p>
+<p><strong>Language:</strong> {{ animation.language }}</p>
+<p><strong>Rating:</strong> {{ animation.overall_rating }} /10</p>
+<p><strong>Country:</strong> {{ animation.country }}</p>
+<p><strong>Views:</strong> {{ animation.view_count }}</p>
+<a href="{% url 'animation_list' %}">Back to Animation List</a>
+{% endblock %}

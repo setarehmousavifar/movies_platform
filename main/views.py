@@ -77,9 +77,11 @@ def custom_logout(request):
 # ========================
 def home(request):
     new_movies = Movie.objects.all().order_by('-release_date')[:5]
+    new_animations = Animation.objects.order_by('-release_date')[:4]
     popular_movies = Movie.objects.all().order_by('-view_count')[:5]
     return render(request, 'main/home.html', {
         'new_movies': new_movies,
+        'new_animations': new_animations,
         'popular_movies': popular_movies,
     })
 
@@ -125,6 +127,11 @@ def movie_detail(request, pk):
         'is_favorite': is_favorite,
         'genres': movie.genres.all(), 
     })
+
+
+def animation_detail(request, pk):
+    animation = get_object_or_404(Animation, pk=pk)
+    return render(request, 'main/animation_detail.html', {'animation': animation})
 
 
 # ========================
