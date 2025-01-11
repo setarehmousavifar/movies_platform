@@ -60,6 +60,8 @@ class Movie(models.Model):
     stars = models.ManyToManyField('Actor', related_name="movies", verbose_name="بازیگران")
     tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")  # رابطه چند به چند با تگ‌ها
     favorites = models.ManyToManyField(User, related_name="favorite_movies", blank=True, verbose_name="علاقه‌مندی‌ها")  # اضافه شده
+    trailer_url = models.URLField(null=True, blank=True, verbose_name="لینک تریلر")  # لینک ویدئو تریلر
+    trailer_video = models.FileField(upload_to='trailers/', null=True, blank=True, verbose_name="ویدئو تریلر")  # آپلود ویدئو تریلر
 
     def __str__(self):
         return self.title  # نمایش عنوان به عنوان رشته نمایشی
@@ -104,6 +106,8 @@ class Series(models.Model):
     stars = models.ManyToManyField('Actor', related_name="series", verbose_name="بازیگران")
     tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")
     favorites = models.ManyToManyField(User, related_name="favorite_series", blank=True, verbose_name="علاقه‌مندی‌ها")
+    trailer_url = models.URLField(null=True, blank=True, verbose_name="لینک تریلر")  # لینک ویدئو تریلر
+    trailer_video = models.FileField(upload_to='trailers/', null=True, blank=True, verbose_name="ویدئو تریلر")  # آپلود ویدئو تریلر
 
     def __str__(self):
         return self.title
@@ -140,6 +144,8 @@ class Animation(models.Model):
     country = models.CharField(max_length=100, verbose_name="کشور تولید")
     tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")
     favorites = models.ManyToManyField(User, related_name="favorite_animations", blank=True, verbose_name="علاقه‌مندی‌ها")
+    trailer_url = models.URLField(null=True, blank=True, verbose_name="لینک تریلر")  # لینک ویدئو تریلر
+    trailer_video = models.FileField(upload_to='trailers/', null=True, blank=True, verbose_name="ویدئو تریلر")  # آپلود ویدئو تریلر
 
     def __str__(self):
         return self.title

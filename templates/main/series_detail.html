@@ -7,6 +7,18 @@
             <div class="col-md-8">
                 <h1 style="color: white;">{{ series.title }}</h1>
                 <img src="{{ series.get_poster }}" alt="{{ series.title }} poster" style="width: 200px; height: auto; border: 2px solid white;">
+                {% if series.trailer_video %}
+                <p style="color: white;"><strong></strong></p>
+                <video controls width="600">
+                    <source src="{{ series.trailer_video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% elif series.trailer_url %}
+                <p style="color: white;"><strong></strong></p>
+                <a href="{{ series.trailer_url }}" class="btn btn-danger" target="_blank">Play Trailer</a>
+            {% else %}
+                <p style="color: white;">No trailer available.</p>
+            {% endif %}
                 <form action="{% url 'add_to_watchlist' series.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Add to Watchlist</button>
