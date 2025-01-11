@@ -12,7 +12,7 @@
                     <button type="submit" class="btn btn-primary">Add to Watchlist</button>
                 </form>
                 <p style="color: white;"><strong>Release Date:</strong> {{ animation.release_date }}</p>
-                <p style="color: white;">Rating:</strong> {{ animation.overall_rating }} /10</p>
+                <p style="color: white;"><strong>Rating:</strong> {{ animation.overall_rating }} /10</p>
                 <p style="color: white;"><strong>Genres:</strong>
                     {% for genre in genres %}
                         {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
@@ -20,11 +20,11 @@
                         No genres available.
                     {% endfor %}
                 </p>
-                <p style="color: white;">Age Rating:</strong> {{ animation.age_rating.name }}</p>
-                <p style="color: white;">Duration:</strong> {{ animation.duration }} minutes</p>
-                <p style="color: white;">Description:</strong> {{ animation.description }}</p>
-                <p style="color: white;">Language:</strong> {{ animation.language }}</p>
-                <p style="color: white;">Country:</strong> {{ animation.country }}</p>
+                <p style="color: white;"><strong>Age Rating:</strong> {{ animation.age_rating.name }}</p>
+                <p style="color: white;"><strong>Duration:</strong> {{ animation.get_duration }}</p>
+                <p style="color: white;"><strong>Description:</strong> {{ animation.description }}</p>
+                <p style="color: white;"><strong>Language:</strong> {{ animation.language }}</p>
+                <p style="color: white;"><strong>Country:</strong> {{ animation.country }}</p>
                 <p style="color: white;"><strong>Directors:</strong> 
                     {% for director in animation.directors.all %}
                         {{ director.name }}{% if not forloop.last %}, {% endif %}
@@ -36,7 +36,7 @@
                     {% endfor %}
                 </p>
         
-                <p style="color: white;">Views:</strong> {{ animation.view_count }}</p>
+                <p style="color: white;"><strong>Views:</strong> {{ animation.view_count }}</p>
                 <a href="{% url 'animation_list' %}">Back to Animation List</a>
             </div>
         </div>

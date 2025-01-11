@@ -71,7 +71,11 @@ class Movie(models.Model):
         elif self.poster_url:
             return self.poster_url
         return None
-
+    
+    def get_duration(self):
+        hours = self.duration // 60
+        minutes = self.duration % 60
+        return f"{hours}h {minutes}m" if hours > 0 else f"{minutes}m"
 
 class Series(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان سریال")
@@ -114,6 +118,11 @@ class Series(models.Model):
     def get_years(self):
         # فرمت سال‌ها به صورت "2008–2013" یا "2008–"
         return f"{self.start_year}–{self.end_year if self.end_year else ''}"
+    
+    def get_duration(self):
+        hours = self.duration // 60
+        minutes = self.duration % 60
+        return f"{hours}h {minutes}m" if hours > 0 else f"{minutes}m"
 
 class Animation(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان انیمیشن")
@@ -142,6 +151,10 @@ class Animation(models.Model):
             return self.poster_url
         return None
 
+    def get_duration(self):
+        hours = self.duration // 60
+        minutes = self.duration % 60
+        return f"{hours}h {minutes}m" if hours > 0 else f"{minutes}m"
 
 # مدل مربوط به ژانرها
 class Genre(models.Model):

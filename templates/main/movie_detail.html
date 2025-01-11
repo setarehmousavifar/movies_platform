@@ -21,7 +21,7 @@
                     {% endfor %}
                 </p>
                 <p style="color: white;"><strong>Age Rating:</strong> {{ movie.age_rating.name }}</p>
-                <p style="color: white;"><strong>Duration:</strong> {{ movie.duration }} minutes</p>
+                <p style="color: white;"><strong>Duration:</strong> {{ movie.get_duration }}</p>
                 <p style="color: white;"><strong>Description:</strong> {{ movie.description }}</p>
                 <p style="color: white;"><strong>Language:</strong> {{ movie.language }}</p>
                 <p style="color: white;"><strong>Country:</strong> {{ movie.country }}</p>
