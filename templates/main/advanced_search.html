@@ -3,9 +3,6 @@
 {% block content %}
 <h1>Advanced Search</h1>
 <form method="get">
-    <label for="query">Search:</label>
-    <input type="text" name="query" id="query" placeholder="Search by title or description">
-    
     <label for="genre">Genre:</label>
     <select name="genre" id="genre">
         <option value="">-- All Genres --</option>
@@ -13,13 +10,25 @@
             <option value="{{ genre.genre_name }}">{{ genre.genre_name }}</option>
         {% endfor %}
     </select>
-    
-    <label for="language">Language:</label>
-    <input type="text" name="language" id="language" placeholder="Enter language" value="{{ language }}" >
-    
-    <label for="min_rating">Minimum Rating:</label>
-    <input type="number" step="0.1" name="min_rating" id="min_rating" placeholder="Enter rating">
 
+    <label for="rating"> Rating:</label>
+    <select name="rating" class="form-select">
+        <option value="">All Ratings</option>
+        <option value="9">Above 9</option>
+        <option value="8">Above 8</option>
+        <option value="7">Above 7</option>
+        <option value="6">Above 6</option>
+        <option value="5">Above 5</option>
+        <option value="4">Below 5</option>
+    </select>
+
+    <select name="sort_by" class="form-select">
+        <option value="">Sort By</option>
+        <option value="newest">Newest</option>
+        <option value="popular">Most Popular</option>
+        <option value="release_year">Release Year</option>
+    </select>
+    
     <button type="submit">Search</button>
 </form>
 

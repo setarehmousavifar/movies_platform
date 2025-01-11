@@ -28,7 +28,9 @@ urlpatterns = [
 
      # Search and Filters
     path('search/', views.search, name='search'),
-    path('advanced-search/', views.advanced_search, name='advanced_search'),  # جستجوی پیشرفته
+    path('movies/advanced-search/', views.movie_advanced_search, name='movie_advanced_search'),
+    path('series/advanced-search/', views.series_advanced_search, name='series_advanced_search'),
+    path('animations/advanced-search/', views.animation_advanced_search, name='animation_advanced_search'),
     path('filter/', views.filter_movies, name='filter_movies'),
 
     # Genres

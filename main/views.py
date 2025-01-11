@@ -171,25 +171,32 @@ def search(request):
 # ========================
 # جستجوی پیشرفته
 # ========================
-def advanced_search(request):
+def movie_advanced_search(request):
     query = request.GET.get('query', '')
-    genre_name = request.GET.get('genre', '')
-    language = request.GET.get('language', '')
-    min_rating = request.GET.get('min_rating', '')
+    genre_id = request.GET.get('genre', '')
+    rating_filter = request.GET.get('rating', '')
+    sort_by = request.GET.get('sort_by', '')
 
     movies = Movie.objects.all()
 
     if query:
         movies = movies.filter(Q(title__icontains=query) | Q(description__icontains=query))
 
-    if genre_name:
-        movies = movies.filter(genres__genre__genre_name__icontains=genre_name)
+    if genre_id:
+        movies = movies.filter(genres__id=genre_id)
 
-    if language:
-        movies = movies.filter(language__icontains=language)
+    if rating_filter:
+        if rating_filter == '4':
+            movies = movies.filter(overall_rating__lt=5)
+        else:
+            movies = movies.filter(overall_rating__gte=rating_filter)
 
-    if min_rating:
-        movies = movies.filter(overall_rating__gte=min_rating)
+    if sort_by == 'newest':
+        movies = movies.order_by('-release_date')
+    elif sort_by == 'popular':
+        movies = movies.order_by('-view_count')
+    elif sort_by == 'release_year':
+        movies = movies.order_by('-release_date__year')
 
     genres = Genre.objects.all()
 
@@ -198,7 +205,83 @@ def advanced_search(request):
         'query': query,
         'genres': genres,
     }
-    return render(request, 'main/advanced_search.html', context)
+    return render(request, 'main/movie_list.html', context)
+
+
+def series_advanced_search(request):
+    query = request.GET.get('query', '')
+    genre_id = request.GET.get('genre', '')
+    rating_filter = request.GET.get('rating', '')
+    sort_by = request.GET.get('sort_by', '')
+
+    series = Series.objects.all()
+
+    if query:
+        series = series.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if genre_id:
+        series = series.filter(genres__id=genre_id)
+
+    if rating_filter:
+        if rating_filter == '4':
+            series = series.filter(overall_rating__lt=5)
+        else:
+            series = series.filter(overall_rating__gte=rating_filter)
+
+    if sort_by == 'newest':
+        series = series.order_by('-start_year')
+    elif sort_by == 'popular':
+        series = series.order_by('-view_count')
+    elif sort_by == 'release_year':
+        series = series.order_by('-start_year')
+
+    genres = Genre.objects.all()
+
+    context = {
+        'series': series,
+        'query': query,
+        'genres': genres,
+    }
+    return render(request, 'main/series_list.html', context)
+
+
+def animation_advanced_search(request):
+    query = request.GET.get('query', '')
+    genre_id = request.GET.get('genre', '')
+    rating_filter = request.GET.get('rating', '')
+    sort_by = request.GET.get('sort_by', '')
+
+    animations = Animation.objects.all()
+
+    if query:
+        animations = animations.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if genre_id:
+        animations = animations.filter(genres__id=genre_id)
+
+    if rating_filter:
+        if rating_filter == '4':
+            animations = animations.filter(overall_rating__lt=5)
+        else:
+            animations = animations.filter(overall_rating__gte=rating_filter)
+
+    if sort_by == 'newest':
+        animations = animations.order_by('-release_date')
+    elif sort_by == 'popular':
+        animations = animations.order_by('-view_count')
+    elif sort_by == 'release_year':
+        animations = animations.order_by('-release_date')
+
+    genres = Genre.objects.all()
+
+    context = {
+        'animations': animations,
+        'query': query,
+        'genres': genres,
+    }
+    return render(request, 'main/animation_list.html', context)
+
+
 
 
 # ========================
