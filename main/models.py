@@ -51,6 +51,7 @@ class Movie(models.Model):
     view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")  # تعداد بازدید
     poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر (لینک)")  # لینک پوستر
     poster_image = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="پوستر (تصویر)")  # تصویر پوستر
+    background_poster = models.ImageField(upload_to='backgrounds/', null=True, blank=True, verbose_name="پوستر پس‌زمینه")
     language = models.CharField(max_length=50, verbose_name="زبان")  # زبان فیلم/سریال
     age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")  # امتیاز کلی فیلم/سریال (مثلاً 4.5 از 5)
@@ -90,6 +91,7 @@ class Series(models.Model):
     view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
     poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر (لینک)")
     poster_image = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="پوستر (تصویر)")
+    background_poster = models.ImageField(upload_to='backgrounds/', null=True, blank=True, verbose_name="پوستر پس‌زمینه")
     language = models.CharField(max_length=50, verbose_name="زبان")
     age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")
@@ -122,6 +124,7 @@ class Animation(models.Model):
     view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
     poster_url = models.URLField(null=True, blank=True, verbose_name="پوستر (لینک)")
     poster_image = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="پوستر (تصویر)")
+    background_poster = models.ImageField(upload_to='backgrounds/', null=True, blank=True, verbose_name="پوستر پس‌زمینه")
     language = models.CharField(max_length=50, verbose_name="زبان")
     age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")

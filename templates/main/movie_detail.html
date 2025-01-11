@@ -1,41 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="movie-detail" style="background-image: url('{{ movie.get_poster }}'); background-size: cover; background-position: center; padding: 20px;">
-    <div class="movie-info" style="background-color: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px;">
-        <h1 style="color: white;">{{ movie.title }}</h1>
-        <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster" style="width: 200px; height: auto; border: 2px solid white;">
-        <form action="{% url 'add_to_watchlist' movie.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
-        </form>
-        <p style="color: white;"><strong>Release Date:</strong> {{ movie.release_date }}</p>
-        <p style="color: white;"><strong>Rating:</strong> {{ movie.overall_rating }} /10</p>
-        <p style="color: white;"><strong>Genres:</strong>
-            {% for genre in genres %}
-                {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-                No genres available.
-            {% endfor %}
-        </p>
-        <p style="color: white;"><strong>Age Rating:</strong> {{ movie.age_rating.name }}</p>
-        <p style="color: white;"><strong>Duration:</strong> {{ movie.duration }} minutes</p>
-        <p style="color: white;"><strong>Description:</strong> {{ movie.description }}</p>
-        <p style="color: white;"><strong>Language:</strong> {{ movie.language }}</p>
-        <p style="color: white;"><strong>Country:</strong> {{ movie.country }}</p>
-        <p style="color: white;"><strong>Directors:</strong> 
-            {% for director in movie.directors.all %}
-                {{ director.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
-        <p style="color: white;"><strong>Stars:</strong> 
-            {% for star in movie.stars.all %}
-                {{ star.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
+<div class="movie-detail" style="background-image: url('{{ movie.background_poster.url|default:"/static/default-background.jpg" }}'); background-size: cover; background-position: center; padding: 50px 0;">
+    <div class="container" style="background-color: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 20px;">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 style="color: white;">{{ movie.title }}</h1>
+                <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster" style="width: 200px; height: auto; border: 2px solid white;">
+                <form action="{% url 'add_to_watchlist' movie.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+                </form>
+                <p style="color: white;"><strong>Release Date:</strong> {{ movie.release_date }}</p>
+                <p style="color: white;"><strong>Rating:</strong> {{ movie.overall_rating }} /10</p>
+                <p style="color: white;"><strong>Genres:</strong>
+                    {% for genre in genres %}
+                        {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No genres available.
+                    {% endfor %}
+                </p>
+                <p style="color: white;"><strong>Age Rating:</strong> {{ movie.age_rating.name }}</p>
+                <p style="color: white;"><strong>Duration:</strong> {{ movie.duration }} minutes</p>
+                <p style="color: white;"><strong>Description:</strong> {{ movie.description }}</p>
+                <p style="color: white;"><strong>Language:</strong> {{ movie.language }}</p>
+                <p style="color: white;"><strong>Country:</strong> {{ movie.country }}</p>
+                <p style="color: white;"><strong>Directors:</strong> 
+                    {% for director in movie.directors.all %}
+                        {{ director.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p style="color: white;"><strong>Stars:</strong> 
+                    {% for star in movie.stars.all %}
+                        {{ star.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
         
-        <p style="color: white;"><strong>Views:</strong> {{ movie.view_count }}</p>
-        <a href="{% url 'movie_list' %}">Back to Movie List</a>
+                <p style="color: white;"><strong>Views:</strong> {{ movie.view_count }}</p>
+                <a href="{% url 'movie_list' %}">Back to Movie List</a>
+            </div>
+        </div>
     </div>
 </div>
 

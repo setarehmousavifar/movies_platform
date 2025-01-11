@@ -1,44 +1,48 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="series-detail" style="background-image: url('{{ series.get_poster }}'); background-size: cover; background-position: center; padding: 20px;">
-    <div class="series-info" style="background-color: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px;">
-        <h1 style="color: white;">{{ series.title }}</h1>
-        <img src="{{ series.get_poster }}" alt="{{ series.title }} poster" style="width: 200px; height: auto; border: 2px solid white;">
-        <form action="{% url 'add_to_watchlist' series.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
-        </form>
-        <p style="color: white;"><strong>Release Date:</strong> {{ series.release_date }}</p>
-        <p style="color: white;"><strong>Rating:</strong> {{ series.overall_rating }} /10</p>
-        <p style="color: white;"><strong>Genres:</strong>
-            {% for genre in genres %}
-                {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-                No genres available.
-            {% endfor %}
-        </p>
-        <p style="color: white;"><strong>Years:</strong> {{ series.get_years }}</p>
-        <p style="color: white;"><strong>Status:</strong> {{ series.status }}</p>
-        <p style="color: white;"><strong>Seasons:</strong> {{ series.seasons }}</p>
-        <p style="color: white;"><strong>Episodes:</strong> {{ series.episodes }}</p>
-        <p style="color: white;"><strong>Age Rating:</strong> {{ series.age_rating.name }}</p>
-        <p style="color: white;"><strong>Language:</strong> {{ series.language }}</p>
-        <p style="color: white;"><strong>Country:</strong> {{ series.country }}</p>
-        <p style="color: white;"><strong>Directors:</strong> 
-            {% for director in series.directors.all %}
-                {{ director.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
-        <p style="color: white;"><strong>Stars:</strong> 
-            {% for star in series.stars.all %}
-                {{ star.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
+<div class="series-detail" style="background-image: url('{{ series.background_poster.url|default:"/static/default-background.jpg" }}'); background-size: cover; background-position: center; padding: 50px 0;">
+    <div class="container" style="background-color: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 20px;">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 style="color: white;">{{ series.title }}</h1>
+                <img src="{{ series.get_poster }}" alt="{{ series.title }} poster" style="width: 200px; height: auto; border: 2px solid white;">
+                <form action="{% url 'add_to_watchlist' series.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+                </form>
+                <p style="color: white;"><strong>Release Date:</strong> {{ series.release_date }}</p>
+                <p style="color: white;"><strong>Rating:</strong> {{ series.overall_rating }} /10</p>
+                <p style="color: white;"><strong>Genres:</strong>
+                    {% for genre in genres %}
+                        {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No genres available.
+                    {% endfor %}
+                </p>
+                <p style="color: white;"><strong>Years:</strong> {{ series.get_years }}</p>
+                <p style="color: white;"><strong>Status:</strong> {{ series.status }}</p>
+                <p style="color: white;"><strong>Seasons:</strong> {{ series.seasons }}</p>
+                <p style="color: white;"><strong>Episodes:</strong> {{ series.episodes }}</p>
+                <p style="color: white;"><strong>Age Rating:</strong> {{ series.age_rating.name }}</p>
+                <p style="color: white;"><strong>Language:</strong> {{ series.language }}</p>
+                <p style="color: white;"><strong>Country:</strong> {{ series.country }}</p>
+                <p style="color: white;"><strong>Directors:</strong> 
+                    {% for director in series.directors.all %}
+                        {{ director.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p style="color: white;"><strong>Stars:</strong> 
+                    {% for star in series.stars.all %}
+                        {{ star.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
         
-        <p style="color: white;"><strong>Description:</strong> {{ series.description }}</p>
-        <p style="color: white;"><strong>Views:</strong> {{ series.view_count }}</p>
-        <a href="{% url 'series_list' %}">Back to Series List</a>
+                <p style="color: white;"><strong>Description:</strong> {{ series.description }}</p>
+                <p style="color: white;"><strong>Views:</strong> {{ series.view_count }}</p>
+                <a href="{% url 'series_list' %}">Back to Series List</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
