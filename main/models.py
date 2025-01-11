@@ -72,8 +72,17 @@ class Movie(models.Model):
 
 class Series(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان سریال")
+    start_year = models.PositiveIntegerField(verbose_name="سال شروع")  # سال شروع
+    end_year = models.PositiveIntegerField(null=True, blank=True, verbose_name="سال پایان")  # سال پایان (اختیاری)
+    status = models.CharField(
+        max_length=20,
+        choices=[('ongoing', 'در حال پخش'), ('ended', 'تمام شده')],
+        verbose_name="وضعیت پخش"
+    )  # وضعیت پخش
+    seasons = models.PositiveIntegerField(verbose_name="تعداد فصل‌ها")  # تعداد فصل‌ها
+    episodes = models.PositiveIntegerField(verbose_name="تعداد قسمت‌ها")  # تعداد قسمت‌ها
     genres = models.ManyToManyField('Genre', related_name='series', verbose_name="ژانرها")
-    release_date = models.DateField(verbose_name="تاریخ انتشار")
+    release_date = models.DateField(verbose_name="تاریخ انتشار اولین قسمت")  # تاریخ انتشار اولین قسمت
     description = models.TextField(verbose_name="توضیحات")
     duration = models.PositiveIntegerField(verbose_name="مدت زمان هر قسمت (دقیقه)")
     view_count = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
@@ -96,6 +105,9 @@ class Series(models.Model):
             return self.poster_url
         return None
 
+    def get_years(self):
+        # فرمت سال‌ها به صورت "2008–2013" یا "2008–"
+        return f"{self.start_year}–{self.end_year if self.end_year else ''}"
 
 class Animation(models.Model):
     title = models.CharField(max_length=200, verbose_name="عنوان انیمیشن")

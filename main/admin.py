@@ -27,8 +27,8 @@ class AnimationAdmin(admin.ModelAdmin):
 
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
-    list_display = ['title', 'release_date', 'overall_rating']
-    list_filter = ('language', 'country')
+    list_display = ['title', 'get_years', 'status', 'seasons', 'episodes', 'overall_rating']
+    list_filter = ('status', 'language', 'country')
     search_fields = ['title', 'description']
     filter_horizontal = ('genres',)
 

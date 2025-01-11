@@ -23,6 +23,24 @@
         {% endfor %}
     </div>
 
+    <!-- بخش سریال های جدید -->
+    <h2>New Series</h2>
+    <div class="row">
+        {% for series in new_series %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <img src="{{ series.get_poster }}" alt="{{ series.title }} poster" style="width: 150px; height: auto;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ series.title }}</h5>
+                    <p class="card-text">Released : {{ series.release_date }}</p>
+                    <a href="{% url 'series_detail' series.id %}" class="btn btn-primary">view</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- بخش انیمیشن های جدید -->
     <h2>New Animations</h2>
     <div class="row">
        {% for animation in new_animations %}
