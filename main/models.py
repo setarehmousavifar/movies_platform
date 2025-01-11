@@ -55,6 +55,8 @@ class Movie(models.Model):
     age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")  # امتیاز کلی فیلم/سریال (مثلاً 4.5 از 5)
     country = models.CharField(max_length=100, verbose_name="کشور تولید")  # کشور تولیدکننده فیلم/سریال
+    directors = models.ManyToManyField('Director', related_name="movies", verbose_name="کارگردان‌ها")
+    stars = models.ManyToManyField('Actor', related_name="movies", verbose_name="بازیگران")
     tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")  # رابطه چند به چند با تگ‌ها
     favorites = models.ManyToManyField(User, related_name="favorite_movies", blank=True, verbose_name="علاقه‌مندی‌ها")  # اضافه شده
 
@@ -92,6 +94,8 @@ class Series(models.Model):
     age_rating = models.ForeignKey(AgeRating, on_delete=models.SET_NULL, null=True, verbose_name="رده‌بندی سنی")
     overall_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0, verbose_name="امتیاز کلی")
     country = models.CharField(max_length=100, verbose_name="کشور تولید")
+    directors = models.ManyToManyField('Director', related_name="series", verbose_name="کارگردان‌ها")
+    stars = models.ManyToManyField('Actor', related_name="series", verbose_name="بازیگران")
     tags = models.ManyToManyField('Tag', blank=True, verbose_name="برچسب‌ها")
     favorites = models.ManyToManyField(User, related_name="favorite_series", blank=True, verbose_name="علاقه‌مندی‌ها")
 

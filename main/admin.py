@@ -9,7 +9,7 @@ from .models import (
     Recommendation, UserGenrePreference
 )
 
-from .models import Movie, Series, Animation
+from .models import Movie, Series, Animation, Director, Actor
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
