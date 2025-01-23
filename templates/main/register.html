@@ -1,32 +1,113 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
-<h1>Register</h1>
+{% load custom_filters %}
 
-<!-- Toast Container for Messages -->
-<div aria-live="polite" aria-atomic="true" class="position-relative" style="z-index: 1050;">
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-info{% endif %} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            {{ message }}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center">Sign Up</h1>
+            <form method="post" class="p-4 border rounded bg-light shadow-sm">
+                {% csrf_token %}
+
+            <!-- Toast Container for Messages -->
+            <div aria-live="polite" aria-atomic="true" class="position-relative" style="z-index: 1050;">
+                <div class="toast-container position-fixed top-0 end-0 p-3">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-info{% endif %} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        {{ message }}
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
-            {% endfor %}
-        {% endif %}
+            </div>
+
+            <!-- Register Form -->
+            <!-- First Name & Last Name -->
+        <div class="row mb-3">
+            <div class="col">
+                <label for="first_name" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" id="first_name" name="first_name" class="form-control" placeholder="First Name">
+                </div>
+            </div>
+            <div class="col">
+                <label for="last_name" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last Name">
+                </div>
+            </div>
+        </div>
+
+            <!-- Username -->
+        <div class="mb-3">
+            <label for="username" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username">
+            </div>
+        </div>
+
+        <!-- Email Address -->
+        <div class="mb-3">
+            <label for="email" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Email Address">
+            </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="mb-3">
+            <label for="phone_number" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                <input type="text" id="phone_number" name="phone_number" class="form-control" placeholder="Phone Number">
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+            <label for="password1" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="password1" name="password1" class="form-control" placeholder="Password">
+            </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mb-3">
+            <label for="password2" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm Password">
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+    </form>
+
+    <!-- Login Prompt -->
+    <div class="text-center mt-3">
+        <p>If you already have an account, <a href="{% url 'login' %}">login here</a>.</p>
+    </div>
+
+    <!-- Back to Home Link -->
+    <div class="text-center mt-3">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
     </div>
 </div>
-
-<!-- Register Form -->
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -23,7 +23,6 @@ def register_user(request):
             messages.error(request, "There was an error with your registration. Please try again.")
     else:
         form = UserRegistrationForm()
-
     return render(request, 'main/register.html', {'form': form})
 
 # ========================
