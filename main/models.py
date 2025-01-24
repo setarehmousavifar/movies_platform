@@ -223,13 +223,28 @@ class Subscription(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="فیلم")  
+    series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True, blank=True)
+    animation = models.ForeignKey(Animation, on_delete=models.CASCADE, null=True, blank=True)  
     rating = models.PositiveIntegerField(verbose_name="امتیاز")  
     review_text = models.TextField(null=True, blank=True, verbose_name="متن نقد")  
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
     review_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ نقد")  
 
     def __str__(self):
-        return f"{self.user.username} - {self.movie.title} - {self.rating}"  
+        return f"{self.user.username} - {self.movie.title if self.movie else self.animation.title} - {self.rating}"  
+
+
+class Reply(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, null=True, blank=True, verbose_name="نقد")  
+    parent_reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name="پاسخ اصلی")  
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  
+    reply_text = models.TextField(verbose_name="متن پاسخ")  
+    reply_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ پاسخ")  
+
+    def __str__(self):
+        if self.parent_reply:
+            return f"Reply to Reply by {self.user.username}"
+        return f"Reply by {self.user.username} to {self.review.movie.title}"  
 
 
 # مدل تاریخچه تماشا
@@ -265,6 +280,8 @@ class Notification(models.Model):
 # مدل لینک های دانلود
 class DownloadLink(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='download_links')  
+    series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True, blank=True)
+    animation = models.ForeignKey(Animation, on_delete=models.CASCADE, null=True, blank=True) 
     quality = models.CharField(max_length=20, choices=[('720p', '720p'), ('1080p', '1080p'), ('4K', '4K')])  
     download_url = models.URLField()  
     file_size = models.CharField(max_length=50)  
@@ -308,19 +325,6 @@ class VideoQuality(models.Model):
 
     def __str__(self):
         return f"{self.movie.title} - {self.quality}"  
-
-
-class Reply(models.Model):
-    review = models.ForeignKey(Review, on_delete=models.CASCADE, null=True, blank=True, verbose_name="نقد")  
-    parent_reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name="پاسخ اصلی")  
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  
-    reply_text = models.TextField(verbose_name="متن پاسخ")  
-    reply_date = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ پاسخ")  
-
-    def __str__(self):
-        if self.parent_reply:
-            return f"Reply to Reply by {self.user.username}"
-        return f"Reply by {self.user.username} to {self.review.movie.title}"  
 
 
 # مدل کارگردان‌ها

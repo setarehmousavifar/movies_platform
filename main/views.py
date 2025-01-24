@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .models import User, Movie, Review, Genre, FavoriteMovie, Profile, Watchlist, Series, Animation
+from .models import User, Movie, Review, Reply, Genre, FavoriteMovie, Profile, Watchlist, Series, Animation
 from django.db.models import Q, Avg
-from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm
+from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm, ReplyForm
 from .models import Subscription, DownloadLink
 from .forms import SubscriptionForm 
 
@@ -92,10 +92,10 @@ def home(request):
 # ========================
 # جزئیات هر فیلم
 # ========================
-@login_required
 def movie_detail(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
     reviews = Review.objects.filter(movie=movie, parent__isnull=True)
+    replies = Reply.objects.filter(review__in=reviews)
     download_links = DownloadLink.objects.filter(movie=movie)
 
     is_favorite = False
@@ -107,10 +107,135 @@ def movie_detail(request, pk):
     movie.save()
     
     if request.method == 'POST':
+        # ارسال نقد جدید
+        if 'review' in request.POST:
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.movie = movie
+                review.user = request.user
+                parent_id = request.POST.get('parent_id')  # دریافت parent_id برای پاسخ
+                if parent_id:
+                    try:
+                        parent_review = Review.objects.get(id=parent_id)
+                        review.parent = parent_review
+                    except Review.DoesNotExist:
+                        pass
+                review.save()
+                return redirect('movie_detail', pk=pk)
+        
+        # ارسال پاسخ به نقد
+        elif 'reply' in request.POST:
+            reply_form = ReplyForm(request.POST)
+            review_id = request.POST.get('review_id')  # دریافت review_id برای پاسخ
+            review = get_object_or_404(Review, id=review_id)
+            if reply_form.is_valid():
+                reply = reply_form.save(commit=False)
+                reply.user = request.user
+                reply.review = review
+                reply.save()
+                return redirect('movie_detail', pk=pk)
+        
+    else:
+        form = ReviewForm()
+        reply_form = ReplyForm()
+
+    return render(request, 'main/movie_detail.html', {
+        'movie': movie,
+        'reviews': reviews,
+        'replies': replies,
+        'form': form,
+        'reply_form': reply_form,
+        'is_favorite': is_favorite,
+        'genres': movie.genres.all(), 
+        'download_links': download_links,
+    })
+
+# ========================
+# جزئیات هر سریال
+# ========================
+def series_detail(request, pk):
+    series = get_object_or_404(Series, pk=pk)
+    reviews = Review.objects.filter(series=series, parent__isnull=True)
+    replies = Reply.objects.filter(review__in=reviews)
+    download_links = DownloadLink.objects.filter(series=series)
+
+    is_favorite = False
+    if request.user.is_authenticated:
+        is_favorite = series.favorites.filter(id=request.user.id).exists()
+
+    # افزایش تعداد بازدیدها
+    series.view_count += 1
+    series.save()
+
+    if request.method == 'POST':
+        # ارسال نقد جدید
+        if 'review' in request.POST:
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.series = series
+                review.user = request.user
+                parent_id = request.POST.get('parent_id')  # دریافت parent_id برای پاسخ
+                if parent_id:
+                    try:
+                        parent_review = Review.objects.get(id=parent_id)
+                        review.parent = parent_review
+                    except Review.DoesNotExist:
+                        pass
+                review.save()
+                return redirect('series_detail', pk=pk)
+
+        # ارسال پاسخ به نقد
+        elif 'reply' in request.POST:
+            reply_form = ReplyForm(request.POST)
+            review_id = request.POST.get('review_id')  # دریافت review_id برای پاسخ
+            review = get_object_or_404(Review, id=review_id)
+            if reply_form.is_valid():
+                reply = reply_form.save(commit=False)
+                reply.user = request.user
+                reply.review = review
+                reply.save()
+                return redirect('series_detail', pk=pk)
+
+    else:
+        form = ReviewForm()
+        reply_form = ReplyForm()
+
+    return render(request, 'main/series_detail.html', {
+        'series': series,
+        'reviews': reviews,
+        'replies': replies,
+        'form': form,
+        'reply_form': reply_form,
+        'is_favorite': is_favorite,
+        'genres': series.genres.all(),
+        'download_links': download_links,
+    })
+
+
+# ========================
+# جزئیات هر انیمیشن
+# ========================
+def animation_detail(request, pk):
+    animation = get_object_or_404(Animation, pk=pk)
+    reviews = Review.objects.filter(animation=animation, parent__isnull=True)
+    replies = Reply.objects.filter(review__in=reviews)
+    download_links = DownloadLink.objects.filter(animation=animation)
+
+    is_favorite = False
+    if request.user.is_authenticated:
+        is_favorite = animation.favorites.filter(id=request.user.id).exists()
+
+    # افزایش تعداد بازدیدها
+    animation.view_count += 1
+    animation.save()
+
+    if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.movie = movie
+            review.animation = animation
             review.user = request.user
             parent_id = request.POST.get('parent_id') 
             if parent_id:
@@ -120,23 +245,18 @@ def movie_detail(request, pk):
                 except Review.DoesNotExist:
                     pass
             review.save()
-            return redirect('movie_detail', pk=pk)
+            return redirect('animation_detail', pk=pk)
     else:
         form = ReviewForm()
 
-    return render(request, 'main/movie_detail.html', {
-        'movie': movie,
+    return render(request, 'main/animation_detail.html', {
+        'animation': animation,
         'reviews': reviews,
+        'replies': replies,
         'form': form,
         'is_favorite': is_favorite,
-        'genres': movie.genres.all(), 
         'download_links': download_links,
     })
-
-
-def animation_detail(request, pk):
-    animation = get_object_or_404(Animation, pk=pk)
-    return render(request, 'main/animation_detail.html', {'animation': animation})
 
 
 # ========================

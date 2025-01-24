@@ -66,8 +66,42 @@
             <div class="col-md-4">
 
                 <!-- بخش نظرات -->
-                <div class="reviews">
+                <div class="reviews-section">
                     <h3>Reviews</h3>
+                        {% for review in reviews %}
+                            <div class="review-box p-3 mb-3 border rounded">
+                                <p><strong>{{ review.user.username }}</strong> says:</p>
+                                <p>{{ review.review_text }}</p>
+                                <p>Rating: {{ review.rating }} / 5</p>
+                                <p><small>Posted on {{ review.review_date }}</small></p>
+                                
+                                <!-- Form for replies -->
+                                <form method="post" action="{% url 'movie_detail' movie.id %}">
+                                    {% csrf_token %}
+                                    {{ reply_form.as_p }}
+                                    <input type="hidden" name="review_id" value="{{ review.id }}">
+                                    <button type="submit" name="reply" class="btn btn-secondary btn-sm">Reply</button>
+                                </form>
+                                
+                                <!-- Display replies -->
+                                {% for reply in review.replies.all %}
+                                    <div class="reply-box ms-4 p-2 border-start">
+                                        <p><strong>{{ reply.user.username }}</strong> replied:</p>
+                                        <p>{{ reply.reply_text }}</p>
+                                        <p><small>Posted on {{ reply.reply_date }}</small></p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        
+                        <!-- Form for adding a new review -->
+                        <h3>Add a Review</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" name="review" class="btn btn-primary">Post Review</button>
+                        </form>
+                    </div>
                 </div>
                 <!-- بخش اطلاعات بیشتر -->
                 <div class="info-box">

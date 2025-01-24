@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from .models import User, Review, Profile, Subscription, DownloadLink
+from .models import User, Review, Reply, Profile, Subscription, DownloadLink
 
 User = get_user_model()
 
@@ -69,7 +69,14 @@ class ReviewForm(forms.ModelForm):
             'review_text': "Review Text",
         }
 
-
+class ReplyForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ['reply_text']
+        labels = {
+            'reply_text': "Reply Text",
+        }
+        
 class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription

@@ -34,3 +34,27 @@ h1, h2, h3, h4, h5, h6 {
 .list-group-item .btn-primary:hover {
     background-color: #8600b3;
 }
+
+.review-box {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.reply-box {
+    background-color: #e9ecef;
+    border-left: 3px solid #007bff;
+    margin-top: 10px;
+}
+
+.comment-box small {
+    color: #888;
+}
+
+form button {
+    font-size: 0.9rem;
+}
+
+.comment-box form {
+    margin-top: 10px;
+}
