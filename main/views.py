@@ -5,6 +5,8 @@ from django.contrib import messages
 from .models import User, Movie, Review, Genre, FavoriteMovie, Profile, Watchlist, Series, Animation
 from django.db.models import Q, Avg
 from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm
+from .models import Subscription
+from .forms import SubscriptionForm 
 
 # ========================
 # ثبت‌نام کاربر
@@ -281,8 +283,6 @@ def animation_advanced_search(request):
     return render(request, 'main/animation_list.html', context)
 
 
-
-
 # ========================
 # نمایش فیلم‌ها بر اساس ژانر
 # ========================
@@ -393,6 +393,22 @@ def watchlist_view(request):
     return render(request, 'main/watchlist.html', {'watchlist': watchlist})
 
 
+@login_required
+def subscription(request):
+    try:
+        subscription = Subscription.objects.get(user=request.user)
+    except Subscription.DoesNotExist:
+        subscription = None
 
-def subscription_settings(request):
-    return render(request, 'main/subscription_settings.html')
+    return render(request, 'main/subscription.html', {'subscription': subscription})
+
+@login_required
+def update_subscription(request):
+    if request.method == 'POST':
+        subscription = Subscription.objects.get(user=request.user)
+        subscription.subscription_type = request.POST.get('subscription_type')
+        subscription.end_date = request.POST.get('end_date')
+        subscription.save()
+        return redirect('subscription')  # به صفحه نمایش اشتراک‌ها بروید
+
+    return render(request, 'main/update_subscription.html')  # صفحه ویرایش اشتراک

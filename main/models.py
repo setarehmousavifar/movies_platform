@@ -210,9 +210,10 @@ class WalletTransaction(models.Model):
 # مدل اشتراک‌ها
 class Subscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="کاربر")  # کاربر مربوط به اشتراک
-    subscription_type = models.CharField(max_length=50, choices=[('basic', 'عادی'), ('premium', 'پریمیوم')], verbose_name="نوع اشتراک")  # نوع اشتراک
+    subscription_type = models.CharField(max_length=50, choices=[('basic', 'Basic'), ('premium', 'Premium')], default='basic')  # نوع اشتراک
     start_date = models.DateField(verbose_name="تاریخ شروع")  # تاریخ شروع اشتراک
     end_date = models.DateField(verbose_name="تاریخ پایان")  # تاریخ پایان اشتراک
+    is_active = models.BooleanField(default=True)  # وضعیت اشتراک (فعال یا غیرفعال)
 
     def __str__(self):
         return f"{self.user.username} - {self.subscription_type}"  # نمایش نوع اشتراک

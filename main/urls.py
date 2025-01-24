@@ -15,7 +15,9 @@ urlpatterns = [
     path('top-movies/', views.top_movies, name='top_movies'),
     path('top-series/', views.top_series, name='top_series'),
     
-    path('subscription-settings/', views.subscription_settings, name='subscription_settings'),
+    # Subscription
+    path('subscription/', views.subscription, name='subscription'),
+    path('update-subscription/', views.update_subscription, name='update_subscription'),
 
     # Watchlist 
     path('watchlist/', views.watchlist_view, name='watchlist'),

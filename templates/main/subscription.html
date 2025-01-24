@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="text-center mb-4">Your Subscription</h1>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {% csrf_token %}
+
+                    {% if subscription %}
+                        <div class="mb-3">
+                            <p><strong>Subscription Type:</strong> {{ subscription.subscription_type }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p><strong>Start Date:</strong> {{ subscription.start_date }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p><strong>End Date:</strong> {{ subscription.end_date }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p><strong>Status:</strong> 
+                                {% if subscription.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% else %}
+                        <p class="alert alert-warning">You don't have an active subscription.</p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-center mt-4">
+                    <a href="{% url 'update_subscription' %}" class="btn btn-primary">Update Subscription</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

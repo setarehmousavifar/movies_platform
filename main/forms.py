@@ -3,6 +3,7 @@ from .models import User, Review
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from .models import Profile
+from .models import Subscription
 
 User = get_user_model()
 
@@ -68,4 +69,14 @@ class ReviewForm(forms.ModelForm):
         labels = {
             'rating': "Rating",
             'review_text': "Review Text",
+        }
+
+
+class SubscriptionForm(forms.ModelForm):
+    class Meta:
+        model = Subscription
+        fields = ['subscription_type', 'end_date']
+        labels = {
+            'subscription_type': 'Subscription Type',
+            'end_date': 'End Date',
         }
