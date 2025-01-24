@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import User, Movie, Review, Genre, FavoriteMovie, Profile, Watchlist, Series, Animation
 from django.db.models import Q, Avg
 from .forms import UserRegistrationForm, ProfileUpdateForm, ReviewForm
-from .models import Subscription
+from .models import Subscription, DownloadLink
 from .forms import SubscriptionForm 
 
 # ========================
@@ -96,6 +96,7 @@ def home(request):
 def movie_detail(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
     reviews = Review.objects.filter(movie=movie, parent__isnull=True)
+    download_links = DownloadLink.objects.filter(movie=movie)
 
     is_favorite = False
     if request.user.is_authenticated:
@@ -129,6 +130,7 @@ def movie_detail(request, pk):
         'form': form,
         'is_favorite': is_favorite,
         'genres': movie.genres.all(), 
+        'download_links': download_links,
     })
 
 

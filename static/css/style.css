@@ -4,3 +4,33 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
 }
+
+.download-box {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgb(255, 255, 255);
+}
+
+.download-box h3 {
+    margin-bottom: 15px;
+}
+
+.list-group-item {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.list-group-item h5 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.list-group-item .btn-primary {
+    background-color: #8600b3;
+    border: none;
+}
+
+.list-group-item .btn-primary:hover {
+    background-color: #8600b3;
+}

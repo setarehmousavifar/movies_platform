@@ -47,7 +47,33 @@
                         {{ star.name }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
-        
+
+                <!-- دانلود باکس -->
+                <div class="download-box">
+                    <h3>Download Box</h3>
+                    <div class="list-group">
+                        {% for link in download_links %}
+                            <div class="list-group-item">
+                                <h5>{{ link.quality }} ({{ link.size }})</h5>
+                                <a href="{{ link.link }}" class="btn btn-primary" target="_blank">Download</a>
+                            </div>
+                        {% empty %}
+                            <p>No download links available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+
+                <!-- بخش نظرات -->
+                <div class="reviews">
+                    <h3>Reviews</h3>
+                </div>
+                <!-- بخش اطلاعات بیشتر -->
+                <div class="info-box">
+                    <h3>More Info</h3>
+                </div>
+
                 <p style="color: white;"><strong>Views:</strong> {{ movie.view_count }}</p>
                 <a href="{% url 'movie_list' %}">Back to Movie List</a>
             </div>

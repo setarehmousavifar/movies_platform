@@ -1,9 +1,7 @@
 from django import forms
-from .models import User, Review
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from .models import Profile
-from .models import Subscription
+from .models import User, Review, Profile, Subscription, DownloadLink
 
 User = get_user_model()
 
