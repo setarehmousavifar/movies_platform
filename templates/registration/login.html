@@ -1,32 +1,68 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Login</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center">Login</h1>
+            <form method="post" class="p-4 border rounded bg-light shadow-sm">
+                {% csrf_token %}
 
-<!-- Toast Container for Messages -->
-<div aria-live="polite" aria-atomic="true" class="position-relative" style="z-index: 1050;">
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-info{% endif %} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            {{ message }}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <!-- Toast Container for Messages -->
+                <div aria-live="polite" aria-atomic="true" class="position-relative" style="z-index: 1050;">
+                    <div class="toast-container position-fixed top-0 end-0 p-3">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-info{% endif %} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                                    <div class="d-flex">
+                                        <div class="toast-body">
+                                            {{ message }}
+                                        </div>
+                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
-            {% endfor %}
-        {% endif %}
+
+                <!-- Login Form -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Username" value="{{ form.username.value }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Password">
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                    <label class="form-check-label" for="remember_me">Remember Me</label>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'password_reset' %}">Forgot your password?</a>
+            </div>
+
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a href="{% url 'register' %}">Sign up here</a>.</p>
+            </div>
+        </div>
     </div>
 </div>
-
-<!-- Login Form -->
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
