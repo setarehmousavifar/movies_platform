@@ -35,30 +35,30 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    phone_number = forms.CharField(max_length=15, required=False, label="Phone Number")
-    profile_picture = forms.ImageField(required=False, label="Profile Picture")
-
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'profile_picture']
         labels = {
             'username': "Username",
             'first_name': 'First Name',
             'last_name': 'Last Name',
             'email': "Email",
+            'phone_number': 'Phone Number',
+            'profile_picture': 'Profile Picture',
         }
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        # بررسی یا ایجاد پروفایل
         profile, created = Profile.objects.get_or_create(user=user)
+        # ذخیره فیلدهای دیگر
         profile.phone_number = self.cleaned_data.get('phone_number')
         if self.cleaned_data.get('profile_picture'):
             profile.profile_picture = self.cleaned_data.get('profile_picture')
         if commit:
-            user.save()
-            profile.save()
+            user.save()  # ذخیره اطلاعات کاربر
+            profile.save()  # ذخیره اطلاعات پروفایل
         return user
-
 
 
 class ReviewForm(forms.ModelForm):
