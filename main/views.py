@@ -14,11 +14,11 @@ def register_user(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])  # رمز عبور را هش کنید
+            user.set_password(form.cleaned_data['password1'])
             user.save()
-            login(request, user)  # ورود خودکار پس از ثبت‌نام
+            login(request, user) 
             messages.success(request, "Registration successful. Welcome!")
-            return redirect('home')  # هدایت به صفحه اصلی یا هر صفحه دیگر
+            return redirect('home') 
         else:
             messages.error(request, "There was an error with your registration. Please try again.")
     else:
@@ -36,7 +36,7 @@ def profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile has been updated successfully!")
-            return redirect('profile')  # Redirect to the profile page after saving
+            return redirect('home')
     else:
         form = ProfileUpdateForm(instance=request.user)
 
@@ -54,7 +54,7 @@ def custom_login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, "You have logged in successfully!")
-            return redirect('home')  # یا هر صفحه‌ای که می‌خواهی کاربر پس از ورود منتقل شود
+            return redirect('home') 
         else:
             messages.error(request, "Invalid username or password.")
             return redirect('login')
@@ -67,7 +67,7 @@ def custom_login_view(request):
 # ========================
 def custom_logout(request):
     logout(request)
-    messages.success(request, "با موفقیت خارج شدید!")
+    messages.success(request, "You have logged out successfully!")
     return redirect('home')
 
 
@@ -109,7 +109,7 @@ def movie_detail(request, pk):
             review = form.save(commit=False)
             review.movie = movie
             review.user = request.user
-            parent_id = request.POST.get('parent_id')  # دریافت parent_id از فرم
+            parent_id = request.POST.get('parent_id') 
             if parent_id:
                 try:
                     parent_review = Review.objects.get(id=parent_id)
@@ -296,7 +296,7 @@ def movies_by_genre(request, genre_id):
 # لیست همه فیلم‌ها
 # ========================
 def movie_list(request):
-    movies = Movie.objects.all()  # همه فیلم‌ها را از دیتابیس دریافت می‌کند
+    movies = Movie.objects.all() 
     return render(request, 'main/movie_list.html', {'movies': movies})
 
 
@@ -351,13 +351,13 @@ def animation_list(request):
 
 
 def top_movies(request):
-    # فرض کنید محبوب‌ترین فیلم‌ها را براساس تعداد بازدید یا امتیاز مرتب می‌کنید
-    top_movies = Movie.objects.order_by('-rating')[:10]  # این خط بسته به مدل شما ممکن است تغییر کند
+    # محبوب‌ترین فیلم‌ها براساس تعداد بازدید یا امتیاز
+    top_movies = Movie.objects.order_by('-rating')[:10] 
     return render(request, 'main/top_movies.html', {'top_movies': top_movies})
 
 
 def top_series(request):
-    # سریال‌ها را بر اساس امتیاز مرتب کنید
+    # محبوب‌ترین سریالها براساس تعداد بازدید یا امتیاز
     top_series = Series.objects.order_by('-rating')[:10]
     return render(request, 'main/top_series.html', {'top_series': top_series})
 

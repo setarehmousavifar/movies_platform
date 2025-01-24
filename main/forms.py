@@ -7,27 +7,28 @@ from .models import Profile
 User = get_user_model()
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password1 = forms.CharField(widget=forms.PasswordInput, label="Password")
+    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'phone_number', 'password']
+        fields = ['first_name', 'last_name', 'username', 'email', 'phone_number', 'password1', 'password2']
         labels = {
             'first_name': 'First Name',
             'last_name': 'Last Name',
             'email': 'Email Address',
             'username': 'Username',
             'phone_number': 'Phone Number',
-            'password': 'Password',
+            'password1': 'Password',
+            'password2': 'Confirm Password',
         }
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
 
-        if password and confirm_password and password != confirm_password:
+        if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Password and Confirm Password must be the same.")
 
         return cleaned_data

@@ -5,8 +5,8 @@ from . import views
 urlpatterns = [
     # General Pages
     path('', views.home, name='home'),  # صفحه اصلی
-    path('movies/', views.movie_list, name='movie_list'),  # لیست فیلم‌ها
-    path('movies/<int:pk>/', views.movie_detail, name='movie_detail'),  # جزئیات فیلم
+    path('movies/', views.movie_list, name='movie_list'),  
+    path('movies/<int:pk>/', views.movie_detail, name='movie_detail'),  
     path('series/', views.series_list, name='series_list'),
     path('series/<int:pk>/', views.series_detail, name='series_detail'),
     path('animations/', views.animation_list, name='animation_list'),
@@ -34,12 +34,12 @@ urlpatterns = [
     path('filter/', views.filter_movies, name='filter_movies'),
 
     # Genres
-    path('genres/', views.genre_list, name='genre_list'),  # لیست ژانرها
-    path('genres/<int:genre_id>/', views.movies_by_genre, name='movies_by_genre'),  # فیلم‌ها بر اساس ژانر
+    path('genres/', views.genre_list, name='genre_list'),  
+    path('genres/<int:genre_id>/', views.movies_by_genre, name='movies_by_genre'),  
 
     # User Pages
-    path('profile/', views.profile_view, name='profile'),  # صفحه پروفایل
-    path('register/', views.register_user, name='register'),  # ثبت‌نام
-    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),  #خروج
+    path('profile/', views.profile_view, name='profile'), 
+    path('register/', views.register_user, name='register'),  
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),  
     path('login/', views.custom_login_view, name='login'), 
 ]
