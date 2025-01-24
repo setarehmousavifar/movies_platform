@@ -62,29 +62,25 @@ FontAwesome (برای استفاده از آیکون‌ها)
 1. کلون کردن مخزن
 ابتدا پروژه را از گیت‌هاب کلون کنید:
 
-bash
-Copy
+
 git clone https://github.com/username/movie_platform.git
 2. ایجاد محیط مجازی
 برای نصب وابستگی‌ها و جلوگیری از تداخل با سایر پروژه‌ها، یک محیط مجازی ایجاد کنید:
 
-bash
-Copy
+
 cd movie_platform
 python -m venv venv
 3. نصب وابستگی‌ها
 تمامی وابستگی‌ها و کتابخانه‌های مورد نیاز را نصب کنید:
 
-bash
-Copy
+
 source venv/bin/activate  # در صورت استفاده از سیستم عامل‌های غیر ویندوز
 venv\Scripts\activate     # در صورت استفاده از ویندوز
 pip install -r requirements.txt
 4. تنظیمات پایگاه داده
 اطمینان حاصل کنید که MySQL روی سیستم شما نصب است. سپس پایگاه داده مورد نیاز را ایجاد کرده و تنظیمات آن را در فایل settings.py وارد کنید.
 
-python
-Copy
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -98,20 +94,17 @@ DATABASES = {
 5. اجرای مایگریشن‌ها
 برای ساخت جداول پایگاه داده بر اساس مدل‌های Django، مایگریشن‌ها را اجرا کنید:
 
-bash
-Copy
+
 python manage.py migrate
 6. ایجاد سوپریوزر
 برای ایجاد یک سوپریوزر (ادمین) برای دسترسی به پنل مدیریت، از دستور زیر استفاده کنید:
 
-bash
-Copy
+
 python manage.py createsuperuser
 7. اجرای سرور
 برای راه‌اندازی سرور محلی و مشاهده پروژه در مرورگر، از دستور زیر استفاده کنید:
 
-bash
-Copy
+
 python manage.py runserver
 پس از اجرای این دستور، پروژه به طور پیش‌فرض در آدرس http://127.0.0.1:8000/ در دسترس خواهد بود.
 

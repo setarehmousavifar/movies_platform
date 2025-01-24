@@ -52,35 +52,37 @@
                 </p>
         
                 <p style="color: white;"><strong>Description:</strong> {{ series.description }}</p>
+            </div>
 
-                
+            <div class="col-md-4">
+                <!-- نوار افقی برای دانلود باکس، نظرات و اطلاعات بیشتر -->
+                <div style="border-top: 2px solid white; margin-top: 20px;"></div>
+
                 <!-- دانلود باکس -->
-                <div class="download-box">
-                    <h3>Download Box</h3>
-                    <div class="list-group">
+                <div class="download-box" style="background-color: #333; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">Download Box</h3>
+                    <div class="list-group" style="margin-top: 10px;">
                         {% for link in download_links %}
-                            <div class="list-group-item">
+                            <div class="list-group-item" style="background-color: #444; color: white; margin-bottom: 10px;">
                                 <h5>{{ link.quality }} ({{ link.size }})</h5>
                                 <a href="{{ link.link }}" class="btn btn-primary" target="_blank">Download</a>
                             </div>
                         {% empty %}
-                            <p>No download links available.</p>
+                            <p style="color: white;">No download links available.</p>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
 
                 <!-- بخش نظرات -->
-                <div class="reviews-section">
-                    <h3>Reviews</h3>
-                        {% for review in reviews %}
-                        <div class="review-box p-3 mb-3 border rounded">
+                <div class="reviews-section" style="background-color: #333; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">Reviews</h3>
+                    {% for review in reviews %}
+                        <div class="review-box p-3 mb-3 border rounded" style="background-color: #555; color: white; margin-top: 10px;">
                             <p><strong>{{ review.user.username }}</strong> says:</p>
                             <p>{{ review.review_text }}</p>
                             <p>Rating: {{ review.rating }} / 5</p>
                             <p><small>Posted on {{ review.review_date }}</small></p>
-                            
+
                             <!-- Form for replies -->
                             <form method="post" action="{% url 'series_detail' series.id %}">
                                 {% csrf_token %}
@@ -88,10 +90,10 @@
                                 <input type="hidden" name="review_id" value="{{ review.id }}">
                                 <button type="submit" name="reply" class="btn btn-secondary btn-sm">Reply</button>
                             </form>
-                            
+
                             <!-- Display replies -->
                             {% for reply in review.replies.all %}
-                                <div class="reply-box ms-4 p-2 border-start">
+                                <div class="reply-box ms-4 p-2 border-start" style="background-color: #666; color: white;">
                                     <p><strong>{{ reply.user.username }}</strong> replied:</p>
                                     <p>{{ reply.reply_text }}</p>
                                     <p><small>Posted on {{ reply.reply_date }}</small></p>
@@ -99,10 +101,10 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    
+
                     <!-- Form for adding a new review -->
-                    <h3>Add a Review</h3>
-                    <form method="post">
+                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">Add a Review</h3>
+                    <form method="post" style="background-color: #333; padding: 20px; border-radius: 5px;">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit" name="review" class="btn btn-primary">Post Review</button>
@@ -110,14 +112,14 @@
                 </div>
 
                 <!-- بخش اطلاعات بیشتر -->
-                <div class="info-box">
-                    <h3>More Info</h3>
+                <div class="info-box" style="background-color: #333; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">More Info</h3>
+                    <p style="color: white;"><strong>Views:</strong> {{ movie.view_count }}</p>
+                    <a href="{% url 'movie_list' %}" class="btn btn-link">Back to Movie List</a>
                 </div>
-
-                <p style="color: white;"><strong>Views:</strong> {{ series.view_count }}</p>
-                <a href="{% url 'series_list' %}">Back to Series List</a>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

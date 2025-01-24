@@ -421,6 +421,14 @@ def movie_list(request):
     movies = Movie.objects.all() 
     return render(request, 'main/movie_list.html', {'movies': movies})
 
+def series_list(request):
+    series = Series.objects.all()
+    return render(request, 'main/series_list.html', {'series': series})
+
+def animation_list(request):
+    animations = Animation.objects.all()
+    return render(request, 'main/animation_list.html', {'animations': animations})
+
 
 # ========================
 # فیلتر فیلم‌ها
@@ -451,25 +459,11 @@ def filter_movies(request):
 
 
 # ========================
-# نمایش همه ژانرها
+# لیست همه ژانرها
 # ========================
 def genre_list(request):
     genres = Genre.objects.all()
     return render(request, 'main/genre_list.html', {'genres': genres})
-
-
-def series_list(request):
-    series = Series.objects.all()
-    return render(request, 'main/series_list.html', {'series': series})
-
-def series_detail(request, pk):
-    series = get_object_or_404(Series, pk=pk)
-    return render(request, 'main/series_detail.html', {'series': series})
-
-
-def animation_list(request):
-    animations = Animation.objects.all()
-    return render(request, 'main/animation_list.html', {'animations': animations})
 
 
 def top_movies(request):

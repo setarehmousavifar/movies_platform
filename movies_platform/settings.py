@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',  # اپلیکیشن اصلی
+    'main',  
 ]
 
 MIDDLEWARE = [
@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'movies_platform.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'movies_platform',  # نام اسکیما
-        'USER': 'root',  # نام کاربری MySQL
-        'PASSWORD': '1111',  # رمز عبور MySQL
-        'HOST': 'localhost',  # یا IP سرور
-        'PORT': '3306',  # پورت پیش‌فرض MySQL
+        'NAME': 'movies_platform',  
+        'USER': 'root',  
+        'PASSWORD': '1111',  
+        'HOST': 'localhost',  
+        'PORT': '3306',
     }
 }
 
@@ -120,15 +120,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# تنظیم آدرس فایل‌های استاتیک
-STATIC_URL = '/static/'
 
-# مسیر فایل‌های استاتیک
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # پوشه static در ریشه پروژه
+    BASE_DIR / "static",  
 ]
 
-# مسیر برای جمع‌آوری فایل‌های استاتیک (در محیط production)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_FINDERS = [
@@ -149,7 +146,7 @@ AUTHENTICATION_BACKENDS = [
 
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'  # یا هر صفحه‌ای که می‌خواهی
+LOGIN_REDIRECT_URL = 'home' 
 LOGOUT_REDIRECT_URL = 'home'
 
 import os
