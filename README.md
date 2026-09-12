@@ -67,7 +67,10 @@ See [DEMO.md](DEMO.md) for a 5-minute walkthrough (site + API + admin AI enrich)
 
 One-page overview: [ARCHITECTURE.md](ARCHITECTURE.md)
 
-Phase notes: `PHASE0_SMOKE.md` … `PHASE6_FRONTEND.md`
+Phase notes:
+- Backend: `PHASE0_SMOKE.md` … `PHASE7_POLISH.md`, `BACKEND_HARDENING.md`
+- Frontend polish: `PHASE_F0_FRONTEND.md` … `PHASE_F6_FRONTEND.md`
+- Earlier site/admin wiring: [PHASE6_FRONTEND.md](PHASE6_FRONTEND.md)
 
 ## Project layout
 
