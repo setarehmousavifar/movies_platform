@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Series</title>
-</head>
-<body>
+
+{% block title %}Top Series{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
     <h1>Top Series</h1>
-    <ul>
+    <ul class="list-group">
         {% for series in top_series %}
-            <li>{{ series.title }} - Rating: {{ series.rating }}</li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'series_detail' series.id %}">{{ series.title }}</a>
+                <span>Rating: {{ series.overall_rating }}</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No series yet.</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,17 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Search Results</h1>
-{% if query %}
-<p>Results for: "{{ query }}":</p>
-<ul>
-    {% for movie in movies %}
-    <li><a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a></li>
-    {% empty %}
-    <p>No Results.</p>
-    {% endfor %}
-</ul>
-{% else %}
-<p>Search</p>
-{% endif %}
+<div class="container mt-4">
+    <h1>Search Results</h1>
+    {% if query %}
+    <p>Results for: "{{ query }}"</p>
+    <ul class="list-group">
+        {% for item in results %}
+        <li class="list-group-item">
+            <span class="badge bg-secondary text-uppercase me-2">{{ item.type }}</span>
+            {% if item.type == 'movie' %}
+            <a href="{% url 'movie_detail' item.id %}">{{ item.title }}</a>
+            {% elif item.type == 'series' %}
+            <a href="{% url 'series_detail' item.id %}">{{ item.title }}</a>
+            {% else %}
+            <a href="{% url 'animation_detail' item.id %}">{{ item.title }}</a>
+            {% endif %}
+            <small class="text-muted ms-2">rating {{ item.overall_rating }}</small>
+            {% if item.ai_summary %}
+            <div class="small text-muted mt-1">{{ item.ai_summary }}</div>
+            {% endif %}
+        </li>
+        {% empty %}
+        <li class="list-group-item">No results.</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Enter a search query in the navbar.</p>
+    {% endif %}
+</div>
 {% endblock %}

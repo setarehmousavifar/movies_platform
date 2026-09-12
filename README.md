@@ -1,140 +1,92 @@
-Movie Platform Project
-این پروژه یک وب‌اپلیکیشن پخش فیلم و سریال هست که با استفاده از Django و Bootstrap ساخته شده. این پروژه به کاربر این امکان رو می‌ده که وارد سایت بشه، ثبت‌نام کنه، وارد حساب کاربری بشه و فیلم‌ها و سریال‌های مختلف رو مشاهده کنه. پروژه شامل قابلیت‌هایی مثل جستجو، مشاهده جزئیات فیلم، و افزودن فیلم‌ها به لیست علاقه‌مندی‌ها (Watchlist) می‌باشد.
+# Movies Platform
 
-پیش‌نیازها
-برای اجرای این پروژه، به موارد زیر نیاز داریم:
+Capstone / portfolio project: a **modular Django monolith** for browsing movies, series, and animations — with REST API, JWT auth, premium entitlements, search, recommendations, AI enrichment, and realtime alerts.
 
-Python 3.x (نسخه 3.6 یا بالاتر)
-Django (نسخه 5.1.4 یا مشابه)
-Bootstrap (برای طراحی واکنش‌گرا)
-MySQL (برای ذخیره‌سازی داده‌ها)
-مراحل نصب و راه‌اندازی
-کلون کردن پروژه از گیت‌هاب ابتدا باید پروژه رو از گیت‌هاب دانلود کنی. این کار رو با دستور زیر می‌تونی انجام بدی:
+**Repository:** [github.com/setarehmousavifar/movies_platform](https://github.com/setarehmousavifar/movies_platform)
 
+## Highlights
 
+| Area | What you get |
+|------|----------------|
+| Catalog | Movies, series, animations, genres, reviews, favorites, watchlist |
+| API | DRF `/api/v1/` + OpenAPI at `/api/docs/` + JWT |
+| Billing | Premium entitlement, upgrade request, staff assign / mock checkout |
+| Intelligence | Full-text search (Postgres) / multi-field fallback, recommendations, AI summary/tags |
+| Ops | Split settings, `/healthz`, Docker Compose (Postgres), structured logging, tests |
+| Realtime | Channels WebSocket `ws/alerts/` + in-app notifications |
 
-git clone https://github.com/username/repository_name.git
-ایجاد و فعال کردن محیط مجازی برای جلوگیری از تداخل نسخه‌های مختلف پکیج‌ها، بهتره که محیط مجازی (virtual environment) رو راه‌اندازی کنی:
+## Stack
 
+- Python 3.13+, **Django 5.2 LTS**
+- Django REST Framework, SimpleJWT, drf-spectacular, django-filter
+- Channels + Daphne (optional Redis channel layer)
+- SQLite (local default) or PostgreSQL 16 (Docker / `DB_ENGINE=postgres`)
 
-python -m venv venv
-venv\Scripts\activate  
-نصب پیش‌نیازها حالا که محیط مجازی رو راه‌اندازی کردی، باید تمام پکیج‌های مورد نیاز رو نصب کنی:
+## Quick start (Windows)
 
-
+```powershell
+cd movies_platform
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-تنظیمات پایگاه داده بعد از نصب پیش‌نیازها، باید تنظیمات پایگاه داده رو انجام بدی. در این پروژه از MySQL به عنوان پایگاه داده استفاده شده. برای اتصال به پایگاه داده، باید تنظیمات دیتابیس رو در فایل settings.py به روز کنی. معمولاً اطلاعات دیتابیس مثل نام پایگاه داده، یوزر و پسورد رو وارد می‌کنیم.
-
-مهاجرت دیتابیس‌ها برای ایجاد جداول و ساختار پایگاه داده از دستور زیر استفاده کن:
-
-
+copy .env.example .env
 python manage.py migrate
-اجرای سرور محلی بعد از انجام تمام مراحل بالا، می‌تونی سرور محلی رو راه‌اندازی کنی:
+python manage.py seed_demo --with-admin
+python manage.py runserver 127.0.0.1:8000
+```
 
-python manage.py runserver
-دسترسی به وب‌اپلیکیشن حالا می‌تونی از مرورگر وب خودت استفاده کنی و وارد آدرس http://127.0.0.1:8000 بشی تا اپلیکیشن رو مشاهده کنی.
+- Site: http://127.0.0.1:8000/  
+- Admin: http://127.0.0.1:8000/admin/ (`admin` / `admin123` after seed)  
+- API docs: http://127.0.0.1:8000/api/docs/  
+- Health: http://127.0.0.1:8000/healthz  
 
-ویژگی‌ها
-ثبت‌نام و ورود کاربران: کاربر می‌تواند از طریق فرم‌های ثبت‌نام و ورود وارد حساب کاربری خود شود.
-جستجو و فیلتر کردن: کاربران می‌توانند فیلم‌ها را براساس نام یا ژانر جستجو کنند.
-لیست علاقه‌مندی‌ها (Watchlist): کاربران می‌توانند فیلم‌ها را به لیست علاقه‌مندی‌ها اضافه کنند.
-پروفایل کاربری: هر کاربر می‌تواند پروفایل خود را مشاهده و ویرایش کند.
-ساختار پروژه
-main/: این پوشه شامل کدهای اصلی پروژه است. مدل‌ها، ویوها و فرم‌های مربوط به کاربران و فیلم‌ها در این پوشه قرار دارند.
-templates/: فایل‌های HTML اینجا ذخیره می‌شوند. شامل صفحات مختلف سایت مثل صفحه اصلی، ورود و ثبت‌نام، پروفایل و غیره.
-static/: پوشه استاتیک برای ذخیره فایل‌های CSS و JavaScript.
-migrations/: فایل‌های مربوط به مهاجرت پایگاه داده.
+For WebSocket alerts:
 
-------------------------------------------------------
+```powershell
+daphne -b 127.0.0.1 -p 8000 movies_platform.asgi:application
+```
 
-Movie Platform Project
-این پروژه یک وب‌اپلیکیشن پلتفرم فیلم و سریال است که با استفاده از Django و Bootstrap طراحی شده است. هدف از این پروژه ایجاد یک سیستم مدیریت فیلم‌ها، کاربران و اشتراک‌ها است. این پروژه شامل صفحات لاگین، ثبت‌نام، پروفایل کاربران، نمایش فیلم‌ها و سریال‌ها، و امکاناتی مانند واچ‌لیست (Watchlist) و لیست علاقه‌مندی‌ها می‌باشد.
+## Docker
 
-پیش‌نیازها
-قبل از شروع، اطمینان حاصل کنید که موارد زیر را نصب کرده‌اید:
+```powershell
+docker compose up --build
+```
 
-Python (نسخه 3.6 یا بالاتر)
-Django (نسخه 5.1.4)
-MySQL برای مدیریت پایگاه داده
-Bootstrap (برای طراحی واکنش‌گرا و جذاب صفحات)
-FontAwesome (برای استفاده از آیکون‌ها)
-نصب و راه‌اندازی پروژه
-1. کلون کردن مخزن
-ابتدا پروژه را از گیت‌هاب کلون کنید:
+## Tests
 
+```powershell
+python manage.py test main.tests api.tests -v 2
+```
 
-git clone https://github.com/username/movie_platform.git
-2. ایجاد محیط مجازی
-برای نصب وابستگی‌ها و جلوگیری از تداخل با سایر پروژه‌ها، یک محیط مجازی ایجاد کنید:
+## Demo script
 
+See [DEMO.md](DEMO.md) for a 5-minute walkthrough (site + API + admin AI enrich).
 
-cd movie_platform
-python -m venv venv
-3. نصب وابستگی‌ها
-تمامی وابستگی‌ها و کتابخانه‌های مورد نیاز را نصب کنید:
+## Architecture
 
+One-page overview: [ARCHITECTURE.md](ARCHITECTURE.md)
 
-source venv/bin/activate  # در صورت استفاده از سیستم عامل‌های غیر ویندوز
-venv\Scripts\activate     # در صورت استفاده از ویندوز
-pip install -r requirements.txt
-4. تنظیمات پایگاه داده
-اطمینان حاصل کنید که MySQL روی سیستم شما نصب است. سپس پایگاه داده مورد نیاز را ایجاد کرده و تنظیمات آن را در فایل settings.py وارد کنید.
+Phase notes: `PHASE0_SMOKE.md` … `PHASE6_FRONTEND.md`
 
+## Project layout
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'movie_platform',
-        'USER': 'your_db_user',
-        'PASSWORD': 'your_db_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
-5. اجرای مایگریشن‌ها
-برای ساخت جداول پایگاه داده بر اساس مدل‌های Django، مایگریشن‌ها را اجرا کنید:
+```
+main/           # Domain models, services, site views, admin, Channels
+api/            # DRF v1 (auth, catalog, engagement, billing, search, AI, alerts)
+movies_platform/settings/  # base / local / production
+templates/      # Server-rendered UI
+static/         # CSS / JS
+```
 
+## Environment
 
-python manage.py migrate
-6. ایجاد سوپریوزر
-برای ایجاد یک سوپریوزر (ادمین) برای دسترسی به پنل مدیریت، از دستور زیر استفاده کنید:
+Copy `.env.example` → `.env`. Important keys:
 
+- `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DB_ENGINE`
+- `OPENAI_API_KEY` (optional AI enrichment)
+- `REDIS_URL` (optional multi-worker Channels)
+- `CATALOG_ALERTS_ENABLED`
 
-python manage.py createsuperuser
-7. اجرای سرور
-برای راه‌اندازی سرور محلی و مشاهده پروژه در مرورگر، از دستور زیر استفاده کنید:
+## License / academic use
 
-
-python manage.py runserver
-پس از اجرای این دستور، پروژه به طور پیش‌فرض در آدرس http://127.0.0.1:8000/ در دسترس خواهد بود.
-
-صفحات و ویژگی‌های پروژه
-1. صفحات اصلی
-صفحه لاگین: برای ورود به سیستم.
-صفحه ثبت‌نام: برای ایجاد حساب کاربری.
-صفحه پروفایل: برای مشاهده و ویرایش اطلاعات کاربری.
-صفحه فیلم‌ها: نمایش لیست فیلم‌ها و اطلاعات مربوط به آن‌ها.
-صفحه سریال‌ها: نمایش لیست سریال‌ها و اطلاعات مربوط به آن‌ها.
-2. ویژگی‌ها
-سیستم لاگین و ثبت‌نام: امکان ثبت‌نام و ورود به سیستم برای کاربران.
-مدیریت اشتراک‌ها: امکان مدیریت اشتراک‌های مختلف برای کاربران.
-واچ‌لیست (Watchlist): اضافه کردن فیلم‌ها به واچ‌لیست برای مشاهده بعدی.
-لیست علاقه‌مندی‌ها: افزودن فیلم‌ها و سریال‌ها به لیست علاقه‌مندی‌ها.
-دسترس‌های مختلف: کاربران عادی، پریمیوم و سوپریوزر با دسترسی‌های متفاوت.
-ساختار پروژه
-1. فایل‌های اصلی
-main/models.py: مدل‌های پایگاه داده برای فیلم‌ها، کاربران، ژانرها و سایر داده‌ها.
-main/views.py: ویوهای مختلف برای صفحات اصلی و تعاملات با کاربران.
-main/templates/: دایرکتوری برای تمام فایل‌های HTML که صفحات وب را مدیریت می‌کنند.
-main/forms.py: فرم‌های ثبت‌نام، لاگین و پروفایل کاربری.
-2. فایل‌های استاتیک
-static/css/: شامل فایل‌های CSS برای طراحی سایت.
-static/js/: شامل فایل‌های جاوااسکریپت برای عملکرد‌های اضافی مانند Toast‌ها.
-static/images/: شامل تصاویر و آیکون‌های مورد استفاده در صفحات.
-نحوه استفاده از سایت
-پس از ثبت‌نام و ورود به سیستم، می‌توانید فیلم‌ها و سریال‌ها را مشاهده کرده و به واچ‌لیست خود اضافه کنید.
-به صفحه پروفایل بروید تا اطلاعات خود را ویرایش کنید.
-به سوپریوزر (اگر دسترسی دارید) وارد شوید و می‌توانید کاربران و اخبار را مدیریت کنید.
-نکات مهم
-حتماً قبل از شروع استفاده از پروژه، تمام مایگریشن‌ها را اجرا کرده و پایگاه داده را به‌روزرسانی کنید.
-در صورتی که به‌روزرسانی‌های جدیدی به پروژه افزوده می‌شود، فایل requirements.txt باید به‌روز شود.
+Undergraduate capstone project by Setareh Mousavifar. Use as a portfolio reference with attribution.

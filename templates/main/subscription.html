@@ -6,9 +6,14 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="text-center mb-4">Your Subscription</h1>
+            <p class="text-center text-muted">Role: <strong>{{ user_role }}</strong></p>
             <div class="card shadow-sm">
                 <div class="card-body">
-                    {% csrf_token %}
+                    {% if has_premium_access %}
+                        <p class="alert alert-success">Premium access is active.</p>
+                    {% else %}
+                        <p class="alert alert-warning">You do not currently have Premium access. Downloads are locked.</p>
+                    {% endif %}
 
                     {% if subscription %}
                         <div class="mb-3">
@@ -21,7 +26,7 @@
                             <p><strong>End Date:</strong> {{ subscription.end_date }}</p>
                         </div>
                         <div class="mb-3">
-                            <p><strong>Status:</strong> 
+                            <p><strong>Status:</strong>
                                 {% if subscription.is_active %}
                                     <span class="badge bg-success">Active</span>
                                 {% else %}
@@ -30,16 +35,29 @@
                             </p>
                         </div>
                     {% else %}
-                        <p class="alert alert-warning">You don't have an active subscription.</p>
+                        <p class="alert alert-secondary">No subscription record yet.</p>
                     {% endif %}
-                    
-                    <div class="d-flex justify-content-center mt-4">
-                    <a href="{% url 'update_subscription' %}" class="btn btn-primary">Update Subscription</a>
+
+                    <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+                        {% if not has_premium_access %}
+                        <form action="{% url 'request_premium_upgrade' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary">Request Premium Upgrade</button>
+                        </form>
+                        {% endif %}
+
+                        {% if is_staff %}
+                        <a href="{% url 'update_subscription' %}" class="btn btn-primary">Staff: Assign Subscription</a>
+                        <form action="{% url 'mock_checkout' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="days" value="30">
+                            <button type="submit" class="btn btn-warning">Staff: Mock Checkout (30 days)</button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

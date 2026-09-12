@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Movies</title>
-</head>
-<body>
+
+{% block title %}Top Movies{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
     <h1>Top Movies</h1>
-    <ul>
+    <ul class="list-group">
         {% for movie in top_movies %}
-            <li>{{ movie.title }} - Rating: {{ movie.rating }}</li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a>
+                <span>Rating: {{ movie.overall_rating }}</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No movies yet.</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+</div>
+{% endblock %}

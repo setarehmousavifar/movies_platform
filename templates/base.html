@@ -5,24 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Movie Platform{% endblock %}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">Movie Platform</a>
+                <a class="navbar-brand" href="{% url 'home' %}">Movie <span>Platform</span></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
-                        <!-- Categories Menu -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Categories
@@ -45,15 +44,21 @@
                         </li>
                     </ul>
 
-                    <!-- Search Form -->
                     <form class="d-flex ms-auto" action="{% url 'search' %}" method="get">
-                        <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
+                        <input class="form-control me-2" type="search" name="q" placeholder="Search catalog…" aria-label="Search">
                         <button class="btn btn-outline-light" type="submit">Search</button>
                     </form>
 
-                    <!-- User Menu -->
                     <ul class="navbar-nav ms-3">
                         {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'notifications_list' %}">
+                                Alerts
+                                {% if unread_notification_count %}
+                                <span class="badge bg-danger">{{ unread_notification_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ user.username }}
@@ -63,6 +68,7 @@
                                 <li><a class="dropdown-item" href="{% url 'favorites_list' %}">Favorites</a></li>
                                 <li><a class="dropdown-item" href="{% url 'watchlist' %}">Watchlist</a></li>
                                 <li><a class="dropdown-item" href="{% url 'subscription' %}">Subscription</a></li>
+                                <li><a class="dropdown-item" href="{% url 'notifications_list' %}">Notifications</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="{% url 'logout' %}" method="post">
@@ -85,15 +91,15 @@
             </div>
         </nav>
     </header>
+    <div id="breaking-alert-toast" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"></div>
     <main>
-        {% block content %}
-        <!-- Main content -->
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
-    <footer class="bg-dark text-light text-center py-3">
+    <footer class="site-footer text-center py-3">
         {% block footer %}
-        <p>© 2025 Movie Platform. All rights reserved.</p>
+        <p>© 2026 Movie Platform — capstone catalog.</p>
         {% endblock %}
     </footer>
+    <script src="{% static 'js/alerts.js' %}"></script>
 </body>
 </html>

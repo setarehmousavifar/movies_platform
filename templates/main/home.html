@@ -1,73 +1,110 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1 class="text-center">Welcome to Movie Platform!</h1>
-    <p class="text-center"></p>
+{% block title %}Movie Platform{% endblock %}
 
-    <!-- بخش فیلم‌های جدید -->
-    <h2>New Movies</h2>
+{% block content %}
+<section class="home-hero">
+    <div class="container">
+        <div class="home-hero-inner">
+            <p class="mb-2"><span class="reel-spinner" aria-hidden="true"></span><span class="text-uppercase" style="letter-spacing:0.12em;font-size:0.75rem;color:var(--mist);">Catalog</span></p>
+            <h1 class="brand-mark">Movie <em>Platform</em></h1>
+            <p>Browse films, series, and animations — search smarter, get recommendations, and unlock premium downloads.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{% url 'movie_list' %}">Explore movies</a>
+                <a class="btn btn-outline-light" href="{% url 'top_movies' %}">Top rated</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-4">
+    <h2 class="section-title">Recommended for you</h2>
+    <div class="row">
+        {% for movie in recommended_movies %}
+        <div class="col-md-3 col-sm-6">
+            <div class="card mb-4">
+                {% if movie.get_poster %}
+                <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">Rating: {{ movie.overall_rating }}</p>
+                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted" style="color:var(--mist)!important;">Browse and favorite titles to improve recommendations.</p>
+        {% endfor %}
+    </div>
+
+    <h2 class="section-title">New Movies</h2>
     <div class="row">
         {% for movie in new_movies %}
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
             <div class="card mb-4">
-                <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster" style="width: 150px; height: auto;">
+                {% if movie.get_poster %}
+                <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ movie.title }}</h5>
-                    <p class="card-text">Released : {{ movie.release_date }}</p>
-                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">view</a>
+                    <p class="card-text">Released: {{ movie.release_date }}</p>
+                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary btn-sm">View</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- بخش سریال های جدید -->
-    <h2>New Series</h2>
+    <h2 class="section-title">New Series</h2>
     <div class="row">
         {% for series in new_series %}
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
             <div class="card mb-4">
-                <img src="{{ series.get_poster }}" alt="{{ series.title }} poster" style="width: 150px; height: auto;">
+                {% if series.get_poster %}
+                <img src="{{ series.get_poster }}" alt="{{ series.title }} poster">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ series.title }}</h5>
-                    <p class="card-text">Released : {{ series.release_date }}</p>
-                    <a href="{% url 'series_detail' series.id %}" class="btn btn-primary">view</a>
+                    <p class="card-text">Released: {{ series.release_date }}</p>
+                    <a href="{% url 'series_detail' series.id %}" class="btn btn-primary btn-sm">View</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- بخش انیمیشن های جدید -->
-    <h2>New Animations</h2>
+    <h2 class="section-title">New Animations</h2>
     <div class="row">
-       {% for animation in new_animations %}
-        <div class="col-md-3">
-            <div class="card">
-                <img src="{{ animation.get_poster }}" alt="{{ animation.title }} poster" style="width: 150px; height: auto;">
+        {% for animation in new_animations %}
+        <div class="col-md-3 col-sm-6">
+            <div class="card mb-4">
+                {% if animation.get_poster %}
+                <img src="{{ animation.get_poster }}" alt="{{ animation.title }} poster">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ animation.title }}</h5>
-                    <p class="card-text">Released : {{ animation.release_date }}</p>
-                    <a href="{% url 'animation_detail' animation.id %}" class="btn btn-primary">view</a>
+                    <p class="card-text">Released: {{ animation.release_date }}</p>
+                    <a href="{% url 'animation_detail' animation.id %}" class="btn btn-primary btn-sm">View</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- بخش فیلم‌های محبوب -->
-    <h2>Popular Movies</h2>
+    <h2 class="section-title">Popular Movies</h2>
     <div class="row">
         {% for movie in popular_movies %}
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-6">
             <div class="card mb-4">
-                <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster" style="width: 150px; height: auto;">
+                {% if movie.get_poster %}
+                <img src="{{ movie.get_poster }}" alt="{{ movie.title }} poster">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ movie.title }}</h5>
-                    <p class="card-text">views: {{ movie.view_count }}</p>
-                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">view</a>
+                    <p class="card-text">Views: {{ movie.view_count }}</p>
+                    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary btn-sm">View</a>
                 </div>
             </div>
         </div>

@@ -1,20 +1,28 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Your Watchlist</h1>
-{% if watchlist %}
-    <ul>
-        {% for item in watchlist %}
-            <li>
-                <a href="{% url 'movie_detail' item.movie.id %}">{{ item.movie.title }}</a>
-                <form action="{% url 'remove_from_watchlist' item.movie.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Your watchlist is empty. Add some movies to watch later!</p>
-{% endif %}
+<div class="container mt-4">
+    <h1>Your Watchlist</h1>
+    {% if watchlist %}
+        <ul class="list-group">
+            {% for item in watchlist %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {% if item.movie %}
+                        <a href="{% url 'movie_detail' item.movie.id %}">{{ item.movie.title }}</a>
+                        <form action="{% url 'remove_from_watchlist' item.movie.id %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    {% elif item.series %}
+                        <a href="{% url 'series_detail' item.series.id %}">{{ item.series.title }} (Series)</a>
+                    {% elif item.animation %}
+                        <a href="{% url 'animation_detail' item.animation.id %}">{{ item.animation.title }} (Animation)</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Your watchlist is empty. Add some movies to watch later!</p>
+    {% endif %}
+</div>
 {% endblock %}

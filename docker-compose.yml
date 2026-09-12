@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: movies_platform
+      POSTGRES_USER: movies
+      POSTGRES_PASSWORD: movies
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U movies -d movies_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: movies_platform.settings.local
+      DJANGO_SECRET_KEY: docker-dev-secret-change-me
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DB_ENGINE: postgres
+      DB_NAME: movies_platform
+      DB_USER: movies
+      DB_PASSWORD: movies
+      DB_HOST: db
+      DB_PORT: "5432"
+      LOG_LEVEL: INFO
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

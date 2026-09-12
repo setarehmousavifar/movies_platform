@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="movie-detail" style="background-image: url('{{ movie.background_poster.url|default:"/static/default-background.jpg" }}'); background-size: cover; background-position: center; padding: 50px 0;">
+<div class="movie-detail" style="{% if movie.background_poster %}background-image: url('{{ movie.background_poster.url }}');{% endif %} background-size: cover; background-position: center; padding: 50px 0; background-color: #111;">
     <div class="container" style="background-color: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 20px;">
         <div class="row">
             <div class="col-md-8">
@@ -24,6 +24,14 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Add to Watchlist</button>
                 </form>
+                {% if user.is_authenticated %}
+                <form action="{% if is_favorite %}{% url 'remove_from_favorites' movie.id %}{% else %}{% url 'add_to_favorites' movie.id %}{% endif %}" method="post" class="mt-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-warning">
+                        {% if is_favorite %}Remove from Favorites{% else %}Add to Favorites{% endif %}
+                    </button>
+                </form>
+                {% endif %}
 
                 <p style="color: white;"><strong>Release Date:</strong> {{ movie.release_date }}</p>
                 <p style="color: white;"><strong>Rating:</strong> {{ movie.overall_rating }} /10</p>
@@ -37,6 +45,12 @@
                 <p style="color: white;"><strong>Age Rating:</strong> {{ movie.age_rating.name }}</p>
                 <p style="color: white;"><strong>Duration:</strong> {{ movie.get_duration }}</p>
                 <p style="color: white;"><strong>Description:</strong> {{ movie.description }}</p>
+                {% if movie.ai_summary %}
+                <p style="color: #cfe2ff;"><strong>AI summary:</strong> {{ movie.ai_summary }}</p>
+                {% endif %}
+                {% if movie.ai_tags %}
+                <p style="color: #cfe2ff;"><strong>AI tags:</strong> {{ movie.ai_tags|join:", " }}</p>
+                {% endif %}
                 <p style="color: white;"><strong>Language:</strong> {{ movie.language }}</p>
                 <p style="color: white;"><strong>Country:</strong> {{ movie.country }}</p>
                 <p style="color: white;"><strong>Directors:</strong> 
@@ -61,8 +75,12 @@
                     <div class="list-group" style="margin-top: 10px;">
                         {% for link in download_links %}
                             <div class="list-group-item" style="background-color: #444; color: white; margin-bottom: 10px;">
-                                <h5>{{ link.quality }} ({{ link.size }})</h5>
-                                <a href="{{ link.link }}" class="btn btn-primary" target="_blank">Download</a>
+                                <h5>{{ link.quality }} ({{ link.file_size }})</h5>
+                                {% if can_download %}
+                                    <a href="{{ link.download_url }}" class="btn btn-primary" target="_blank">Download</a>
+                                {% else %}
+                                    <a href="{% url 'subscription' %}" class="btn btn-outline-light btn-sm">Premium required</a>
+                                {% endif %}
                             </div>
                         {% empty %}
                             <p style="color: white;">No download links available.</p>
@@ -92,8 +110,8 @@
                             {% for reply in review.replies.all %}
                                 <div class="reply-box ms-4 p-2 border-start" style="background-color: #666; color: white;">
                                     <p><strong>{{ reply.user.username }}</strong> replied:</p>
-                                    <p>{{ reply.reply_text }}</p>
-                                    <p><small>Posted on {{ reply.reply_date }}</small></p>
+                                    <p>{{ reply.review_text }}</p>
+                                    <p><small>Posted on {{ reply.review_date }}</small></p>
                                 </div>
                             {% endfor %}
                         </div>
