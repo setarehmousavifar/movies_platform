@@ -3,6 +3,8 @@
 ## Goal
 Site templates and Django Admin consume the same service layer / API contracts from Phases 2–5 (no parallel business logic).
 
+> **Follow-up:** UI polish after this milestone lives in `PHASE_F0_FRONTEND.md` … `PHASE_F6_FRONTEND.md` (templates theme, API progressive enhancement, SEO, commercial admin, optional JWT `/app/` client).
+
 ## Admin
 - Movie / Series / Animation: `ai_summary`, `ai_tags`, `ai_enriched_at` fieldset
 - Bulk action: **Enrich selected with AI summary/tags**
@@ -23,6 +25,8 @@ Routes:
 
 ## Client JS
 - `static/js/alerts.js` — WebSocket toast for `/ws/alerts/` (needs Daphne)
+- `static/js/api.js` — session CSRF progressive enhancement (F1)
+- `/app/` — optional JWT browse SPA (F6)
 
 ## API still available for SPA / mobile
 All Phase 3–5 endpoints under `/api/v1/` + OpenAPI at `/api/docs/`.
