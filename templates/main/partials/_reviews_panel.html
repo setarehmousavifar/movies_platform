@@ -1,0 +1,34 @@
+{# Expects: reviews, form, reply_form, post_url #}
+<section class="detail-panel">
+  <h3 class="detail-panel-title">Reviews</h3>
+  {% for review in reviews %}
+  <div class="review-box">
+    <p><strong>{{ review.user.username }}</strong> says:</p>
+    <p>{{ review.review_text }}</p>
+    <p>Rating: {{ review.rating }} / 10</p>
+    <p class="detail-muted"><small>Posted on {{ review.review_date }}</small></p>
+    <form method="post" action="{{ post_url }}">
+      {% csrf_token %}
+      {{ reply_form.as_p }}
+      <input type="hidden" name="review_id" value="{{ review.id }}">
+      <button type="submit" name="reply" class="btn btn-secondary btn-sm">Reply</button>
+    </form>
+    {% for reply in review.replies.all %}
+    <div class="reply-box">
+      <p><strong>{{ reply.user.username }}</strong> replied:</p>
+      <p>{{ reply.review_text }}</p>
+      <p class="detail-muted"><small>Posted on {{ reply.review_date }}</small></p>
+    </div>
+    {% endfor %}
+  </div>
+  {% empty %}
+  <p class="detail-muted">No reviews yet.</p>
+  {% endfor %}
+
+  <h3 class="detail-panel-title mt-3">Add a Review</h3>
+  <form method="post" action="{{ post_url }}" class="review-compose">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="review" class="btn btn-primary">Post Review</button>
+  </form>
+</section>

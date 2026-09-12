@@ -1,0 +1,22 @@
+# Expects: poster (optional), schema_type, schema_name, schema_description, schema_url
+{% load catalog_extras %}
+{% with og_image=poster|absolute_media_uri:request %}
+{% if og_image %}
+<meta property="og:image" content="{{ og_image }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ og_image }}">
+<link rel="preload" as="image" href="{{ og_image }}">
+{% else %}
+<meta name="twitter:card" content="summary">
+{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ schema_type|default:'Movie' }}",
+  "name": "{{ schema_name|escapejs }}",
+  "description": "{{ schema_description|escapejs }}",
+  "url": "{{ schema_url|escapejs }}"{% if og_image %},
+  "image": "{{ og_image|escapejs }}"{% endif %}
+}
+</script>
+{% endwith %}

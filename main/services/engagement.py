@@ -20,8 +20,8 @@ class ReviewService:
             filters['animation'] = animation
         try:
             return Review.objects.get(**filters)
-        except Review.DoesNotExist:
-            return None
+        except Review.DoesNotExist as exc:
+            raise ValidationDomainError('Invalid parent_id for this catalog item.') from exc
 
     @classmethod
     @transaction.atomic
@@ -97,10 +97,40 @@ class FavoriteService:
 
     @staticmethod
     @transaction.atomic
+    def add_item(user, *, movie=None, series=None, animation=None):
+        if not user.is_authenticated:
+            raise PermissionDeniedError('Login required.')
+        targets = [movie, series, animation]
+        if sum(t is not None for t in targets) != 1:
+            raise ValidationDomainError('Provide exactly one of movie, series, or animation.')
+        if movie is not None:
+            return FavoriteItem.objects.get_or_create(user=user, movie=movie)
+        if series is not None:
+            return FavoriteItem.objects.get_or_create(user=user, series=series)
+        return FavoriteItem.objects.get_or_create(user=user, animation=animation)
+
+    @staticmethod
+    @transaction.atomic
     def remove_movie(user, movie: Movie):
         if not user.is_authenticated:
             raise PermissionDeniedError('Login required.')
         FavoriteItem.objects.filter(user=user, movie=movie).delete()
+
+    @staticmethod
+    @transaction.atomic
+    def remove_item(user, *, movie=None, series=None, animation=None):
+        if not user.is_authenticated:
+            raise PermissionDeniedError('Login required.')
+        targets = [movie, series, animation]
+        if sum(t is not None for t in targets) != 1:
+            raise ValidationDomainError('Provide exactly one of movie, series, or animation.')
+        qs = FavoriteItem.objects.filter(user=user)
+        if movie is not None:
+            qs.filter(movie=movie).delete()
+        elif series is not None:
+            qs.filter(series=series).delete()
+        else:
+            qs.filter(animation=animation).delete()
 
     @staticmethod
     def list_for(user):
@@ -111,6 +141,24 @@ class FavoriteService:
 
 class WatchlistService:
     @staticmethod
+    def is_watchlist_movie(user, movie: Movie) -> bool:
+        if not user.is_authenticated:
+            return False
+        return Watchlist.objects.filter(user=user, movie=movie).exists()
+
+    @staticmethod
+    def is_watchlist_series(user, series) -> bool:
+        if not user.is_authenticated:
+            return False
+        return Watchlist.objects.filter(user=user, series=series).exists()
+
+    @staticmethod
+    def is_watchlist_animation(user, animation) -> bool:
+        if not user.is_authenticated:
+            return False
+        return Watchlist.objects.filter(user=user, animation=animation).exists()
+
+    @staticmethod
     @transaction.atomic
     def add_movie(user, movie: Movie):
         if not user.is_authenticated:
@@ -120,10 +168,40 @@ class WatchlistService:
 
     @staticmethod
     @transaction.atomic
+    def add_item(user, *, movie=None, series=None, animation=None):
+        if not user.is_authenticated:
+            raise PermissionDeniedError('Login required.')
+        targets = [movie, series, animation]
+        if sum(t is not None for t in targets) != 1:
+            raise ValidationDomainError('Provide exactly one of movie, series, or animation.')
+        if movie is not None:
+            return Watchlist.objects.get_or_create(user=user, movie=movie)
+        if series is not None:
+            return Watchlist.objects.get_or_create(user=user, series=series)
+        return Watchlist.objects.get_or_create(user=user, animation=animation)
+
+    @staticmethod
+    @transaction.atomic
     def remove_movie(user, movie: Movie):
         if not user.is_authenticated:
             raise PermissionDeniedError('Login required.')
         Watchlist.objects.filter(user=user, movie=movie).delete()
+
+    @staticmethod
+    @transaction.atomic
+    def remove_item(user, *, movie=None, series=None, animation=None):
+        if not user.is_authenticated:
+            raise PermissionDeniedError('Login required.')
+        targets = [movie, series, animation]
+        if sum(t is not None for t in targets) != 1:
+            raise ValidationDomainError('Provide exactly one of movie, series, or animation.')
+        qs = Watchlist.objects.filter(user=user)
+        if movie is not None:
+            qs.filter(movie=movie).delete()
+        elif series is not None:
+            qs.filter(series=series).delete()
+        else:
+            qs.filter(animation=animation).delete()
 
     @staticmethod
     def list_for(user):

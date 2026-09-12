@@ -5,7 +5,7 @@
 (function () {
   var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   var url = protocol + '//' + window.location.host + '/ws/alerts/';
-  var container = document.getElementById('breaking-alert-toast');
+  var container = document.getElementById('catalog-alert-toast') || document.getElementById('breaking-alert-toast');
   if (!container || typeof WebSocket === 'undefined') {
     return;
   }

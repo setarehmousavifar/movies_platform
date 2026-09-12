@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}{{ genre.genre_name }} · Movie Platform{% endblock %}
+
 {% block content %}
-<h1>Movies in {{ genre.genre_name }}</h1>
-<ul>
+<div class="container py-4">
+  <h1 class="page-title">Movies in {{ genre.genre_name }}</h1>
+  <div class="row">
     {% for movie in movies %}
-        <li>
-            <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a>
-        </li>
+      {% url 'movie_detail' movie.id as item_url %}
+      {% include 'main/partials/_poster_card.html' with title=movie.title url=item_url poster=movie.get_poster meta=movie.overall_rating col_class='col-md-4 col-sm-6' %}
+    {% empty %}
+    <p class="detail-muted">No movies in this genre.</p>
     {% endfor %}
-</ul>
-<a href="{% url 'genre_list' %}">Back to Genres</a>
+  </div>
+  <a href="{% url 'genre_list' %}" class="btn btn-outline-light btn-sm mt-2">Back to Genres</a>
+</div>
 {% endblock %}

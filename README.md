@@ -38,6 +38,7 @@ python manage.py runserver 127.0.0.1:8000
 - Site: http://127.0.0.1:8000/  
 - Admin: http://127.0.0.1:8000/admin/ (`admin` / `admin123` after seed)  
 - API docs: http://127.0.0.1:8000/api/docs/  
+- JWT browse app: http://127.0.0.1:8000/app/  
 - Health: http://127.0.0.1:8000/healthz  
 
 For WebSocket alerts:

@@ -1,0 +1,18 @@
+{# Expects: download_links, can_download #}
+<section class="detail-panel" aria-labelledby="download-box-title">
+  <h3 class="detail-panel-title" id="download-box-title">Download Box</h3>
+  <div class="list-group detail-list">
+    {% for link in download_links %}
+    <div class="list-group-item detail-list-item">
+      <h5 class="mb-2">{{ link.quality }} ({{ link.file_size }})</h5>
+      {% if can_download %}
+      <a href="{% url 'download_unlock' link.id %}" class="btn btn-primary btn-sm" rel="noopener">Download</a>
+      {% else %}
+      <a href="{% url 'subscription' %}" class="btn btn-outline-light btn-sm">Premium required</a>
+      {% endif %}
+    </div>
+    {% empty %}
+    <p class="detail-muted mb-0">No download links available.</p>
+    {% endfor %}
+  </div>
+</section>

@@ -18,9 +18,10 @@ python manage.py runserver 127.0.0.1:8000
 
 ## 2. Admin (1 min)
 
-1. http://127.0.0.1:8000/admin/
+1. http://127.0.0.1:8000/admin/ — operations snapshot (counts, upgrade requests).
 2. Movies → select rows → action **Enrich selected with AI summary/tags**.
-3. Open a movie → **AI enrichment** fieldset.
+3. Open a movie → download links inline + **AI enrichment** fieldset.
+4. Users/Subscriptions → action **Grant premium (30 days)** (billing service).
 
 ## 3. API (2 min)
 
@@ -36,7 +37,9 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8000/api/v1/search/?q=a' -Headers $h
 Invoke-RestMethod -Uri 'http://127.0.0.1:8000/healthz'
 ```
 
-## 4. Optional realtime
+## 4. Optional realtime (WebSocket alerts)
+
+Use Daphne instead of `runserver` so `/ws/alerts/` works:
 
 ```powershell
 daphne -b 127.0.0.1 -p 8000 movies_platform.asgi:application
@@ -44,8 +47,15 @@ daphne -b 127.0.0.1 -p 8000 movies_platform.asgi:application
 
 Create a new movie in Admin while the site is open — toast via `/ws/alerts/` (staff notifications also appear under Alerts).
 
+## SEO check
+
+- http://127.0.0.1:8000/robots.txt
+- http://127.0.0.1:8000/sitemap.xml
+- View-source on a movie detail page: Open Graph + JSON-LD
+
 ## Talking points
 
 - Same services power HTML and API.
 - Premium gate for downloads (show locked `download_url` for free user in API detail).
-- Phase docs `PHASE0`–`PHASE6` map to academic milestones.
+- Optional JWT browse client at `/app/` (Phase F6) for SPA/API storytelling.
+- Phase docs `PHASE0`–`PHASE7` + `PHASE_F0`–`PHASE_F6` map to academic milestones.

@@ -1,20 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Top Movies{% endblock %}
+{% block title %}Top Movies · Movie Platform{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Top Movies</h1>
-    <ul class="list-group">
-        {% for movie in top_movies %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a>
-                <span>Rating: {{ movie.overall_rating }}</span>
-            </li>
-        {% empty %}
-            <li class="list-group-item">No movies yet.</li>
-        {% endfor %}
-    </ul>
+<div class="container py-4">
+  <h1 class="page-title">Top Movies</h1>
+  <div class="row">
+    {% for movie in top_movies %}
+      {% url 'movie_detail' movie.id as item_url %}
+      {% include 'main/partials/_poster_card.html' with title=movie.title url=item_url poster=movie.get_poster meta=movie.overall_rating %}
+    {% empty %}
+    <p class="detail-muted">No movies yet.</p>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

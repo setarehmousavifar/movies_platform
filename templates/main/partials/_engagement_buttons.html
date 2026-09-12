@@ -1,0 +1,17 @@
+{# Expects: kind, pk, is_favorite, is_watchlisted #}
+{% if user.is_authenticated %}
+<div class="engagement-actions mb-3" role="group" aria-label="Save title">
+  <form action="{% if is_watchlisted %}{% url 'remove_from_watchlist' kind pk %}{% else %}{% url 'add_to_watchlist' kind pk %}{% endif %}" method="post" class="d-inline-block me-2 mb-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" aria-pressed="{% if is_watchlisted %}true{% else %}false{% endif %}">
+      {% if is_watchlisted %}Remove from Watchlist{% else %}Add to Watchlist{% endif %}
+    </button>
+  </form>
+  <form action="{% if is_favorite %}{% url 'remove_from_favorites' kind pk %}{% else %}{% url 'add_to_favorites' kind pk %}{% endif %}" method="post" class="d-inline-block mb-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-warning" aria-pressed="{% if is_favorite %}true{% else %}false{% endif %}">
+      {% if is_favorite %}Remove from Favorites{% else %}Add to Favorites{% endif %}
+    </button>
+  </form>
+</div>
+{% endif %}

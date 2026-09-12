@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse App · Movie Platform</title>
+  <meta name="description" content="JWT-powered catalog browse demo for Movie Platform API.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/spa-browse.css' %}">
+  <script>
+    window.MP_SPA = {
+      apiBase: "{{ request.scheme }}://{{ request.get_host }}/api/v1",
+      siteHome: "{% url 'home' %}"
+    };
+  </script>
+</head>
+<body class="spa-body">
+  <a class="skip-link" href="#spa-main">Skip to content</a>
+  <header class="spa-header">
+    <div class="spa-header-inner">
+      <a class="spa-brand" href="#/">Movie <span>API Browse</span></a>
+      <nav class="spa-nav" aria-label="Browse sections">
+        <a href="#/movies" data-route="movies">Movies</a>
+        <a href="#/series" data-route="series">Series</a>
+        <a href="#/animations" data-route="animations">Animations</a>
+        <a href="#/search" data-route="search">Search</a>
+        <a href="#/recommended" data-route="recommended">For you</a>
+      </nav>
+      <div class="spa-auth" id="spa-auth-slot"></div>
+    </div>
+  </header>
+
+  <main id="spa-main" class="spa-main" tabindex="-1">
+    <p class="spa-loading" id="spa-boot">Loading…</p>
+  </main>
+
+  <footer class="spa-footer">
+    <p>
+      JWT demo client · same <code>/api/v1/</code> as the SSR site ·
+      <a href="{% url 'home' %}">Back to full site</a> ·
+      <a href="{% url 'swagger-ui' %}">OpenAPI</a>
+    </p>
+  </footer>
+
+  <div id="spa-toast" class="spa-toast" hidden role="status" aria-live="polite"></div>
+  <script src="{% static 'js/spa-browse.js' %}" defer></script>
+</body>
+</html>

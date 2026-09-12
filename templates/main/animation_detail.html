@@ -1,146 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}{{ animation.title }} · Movie Platform{% endblock %}
+{% block meta_description %}{{ animation.description|truncatechars:160 }}{% endblock %}
+{% block og_title %}{{ animation.title }}{% endblock %}
+{% block og_description %}{{ animation.description|truncatechars:160 }}{% endblock %}
+{% block og_type %}video.movie{% endblock %}
+{% block meta_extra %}
+{% include 'main/partials/_seo_detail.html' with poster=animation.get_poster schema_type='Movie' schema_name=animation.title schema_description=animation.description|truncatechars:160 schema_url=request.build_absolute_uri %}
+{% endblock %}
+
 {% block content %}
-<div class="animation-detail" style="{% if animation.background_poster %}background-image: url('{{ animation.background_poster.url }}');{% endif %} background-size: cover; background-position: center; padding: 50px 0; background-color: #111;">
-    <div class="container" style="background-color: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 20px;">
-        <div class="row">
-            <div class="col-md-8">
-                <h1 style="color: white;">{{ animation.title }}</h1>
-                <img src="{{ animation.get_poster }}" alt="{{ animation.title }} poster" style="width: 200px; height: auto; border: 2px solid white;">
-                {% if animation.trailer_video %}
-                <p style="color: white;"><strong></strong></p>
-                <video controls width="600">
-                    <source src="{{ animation.trailer_video.url }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            {% elif animation.trailer_url %}
-                <p style="color: white;"><strong></strong></p>
-                <a href="{{ animation.trailer_url }}" class="btn btn-danger" target="_blank">Play Trailer</a>
-            {% else %}
-                <p style="color: white;">No trailer available.</p>
-            {% endif %}
-                <p style="color: white;"><strong>Release Date:</strong> {{ animation.release_date }}</p>
-                <p style="color: white;"><strong>Rating:</strong> {{ animation.overall_rating }} /10</p>
-                <p style="color: white;"><strong>Genres:</strong>
-                    {% for genre in genres %}
-                        {{ genre.genre_name }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        No genres available.
-                    {% endfor %}
-                </p>
-                <p style="color: white;"><strong>Age Rating:</strong> {{ animation.age_rating.name }}</p>
-                <p style="color: white;"><strong>Duration:</strong> {{ animation.get_duration }}</p>
-                <p style="color: white;"><strong>Description:</strong> {{ animation.description }}</p>
-                {% if animation.ai_summary %}
-                <p style="color: #cfe2ff;"><strong>AI summary:</strong> {{ animation.ai_summary }}</p>
-                {% endif %}
-                {% if animation.ai_tags %}
-                <p style="color: #cfe2ff;"><strong>AI tags:</strong> {{ animation.ai_tags|join:", " }}</p>
-                {% endif %}
-                <p style="color: white;"><strong>Language:</strong> {{ animation.language }}</p>
-                <p style="color: white;"><strong>Country:</strong> {{ animation.country }}</p>
-                <p style="color: white;"><strong>Directors:</strong> 
-                    {% for director in animation.directors.all %}
-                        {{ director.name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </p>
-                <p style="color: white;"><strong>Stars:</strong> 
-                    {% for star in animation.stars.all %}
-                        {{ star.name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </p>
+<section class="detail-shell"{% if animation.background_poster %} style="background-image: url('{{ animation.background_poster.url }}');"{% endif %}>
+  <div class="container detail-surface">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <h1 class="detail-title">{{ animation.title }}</h1>
+        {% if animation.get_poster %}
+        <img class="detail-poster" src="{{ animation.get_poster }}" alt="{{ animation.title }} poster" width="200" height="300" loading="eager" fetchpriority="high" decoding="async">
+        {% endif %}
 
-                
-                <!-- دانلود باکس -->
-                <div class="download-box">
-                    <h3>Download Box</h3>
-                    <div class="list-group">
-                        {% for link in download_links %}
-                            <div class="list-group-item">
-                                <h5>{{ link.quality }} ({{ link.file_size }})</h5>
-                                {% if can_download %}
-                                    <a href="{{ link.download_url }}" class="btn btn-primary" target="_blank">Download</a>
-                                {% else %}
-                                    <a href="{% url 'subscription' %}" class="btn btn-outline-light btn-sm">Premium required</a>
-                                {% endif %}
-                            </div>
-                        {% empty %}
-                            <p>No download links available.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+        {% if animation.trailer_video %}
+        <video class="detail-trailer" controls>
+          <source src="{{ animation.trailer_video.url }}" type="video/mp4">
+        </video>
+        {% elif animation.trailer_url %}
+        <a href="{{ animation.trailer_url }}" class="btn btn-danger mb-3" target="_blank" rel="noopener">Play Trailer</a>
+        {% else %}
+        <p class="detail-muted">No trailer available.</p>
+        {% endif %}
 
-            <div class="col-md-4">
-                <!-- نوار افقی برای دانلود باکس، نظرات و اطلاعات بیشتر -->
-                <div style="border-top: 2px solid white; margin-top: 20px;"></div>
+        {% include 'main/partials/_engagement_buttons.html' with kind='animation' pk=animation.id is_favorite=is_favorite is_watchlisted=is_watchlisted %}
 
-                <!-- دانلود باکس -->
-                <div class="download-box" style="background-color: #333; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">Download Box</h3>
-                    <div class="list-group" style="margin-top: 10px;">
-                        {% for link in download_links %}
-                            <div class="list-group-item" style="background-color: #444; color: white; margin-bottom: 10px;">
-                                <h5>{{ link.quality }} ({{ link.file_size }})</h5>
-                                {% if can_download %}
-                                    <a href="{{ link.download_url }}" class="btn btn-primary" target="_blank">Download</a>
-                                {% else %}
-                                    <a href="{% url 'subscription' %}" class="btn btn-outline-light btn-sm">Premium required</a>
-                                {% endif %}
-                            </div>
-                        {% empty %}
-                            <p style="color: white;">No download links available.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- بخش نظرات -->
-                <div class="reviews-section" style="background-color: #333; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">Reviews</h3>
-                    {% for review in reviews %}
-                        <div class="review-box p-3 mb-3 border rounded" style="background-color: #555; color: white; margin-top: 10px;">
-                            <p><strong>{{ review.user.username }}</strong> says:</p>
-                            <p>{{ review.review_text }}</p>
-                            <p>Rating: {{ review.rating }} / 5</p>
-                            <p><small>Posted on {{ review.review_date }}</small></p>
-
-                            <!-- Form for replies -->
-                            <form method="post" action="{% url 'animation_detail' animation.id %}">
-                                {% csrf_token %}
-                                {{ reply_form.as_p }}
-                                <input type="hidden" name="review_id" value="{{ review.id }}">
-                                <button type="submit" name="reply" class="btn btn-secondary btn-sm">Reply</button>
-                            </form>
-
-                            <!-- Display replies -->
-                            {% for reply in review.replies.all %}
-                                <div class="reply-box ms-4 p-2 border-start" style="background-color: #666; color: white;">
-                                    <p><strong>{{ reply.user.username }}</strong> replied:</p>
-                                    <p>{{ reply.review_text }}</p>
-                                    <p><small>Posted on {{ reply.review_date }}</small></p>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-
-                    <!-- Form for adding a new review -->
-                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">Add a Review</h3>
-                    <form method="post" style="background-color: #333; padding: 20px; border-radius: 5px;">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" name="review" class="btn btn-primary">Post Review</button>
-                    </form>
-                </div>
-
-                <!-- بخش اطلاعات بیشتر -->
-                <div class="info-box" style="background-color: #333; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                    <h3 style="color: white; background-color: #444; padding: 10px; border-radius: 5px;">More Info</h3>
-                    <p style="color: white;"><strong>Views:</strong> {{ movie.view_count }}</p>
-                    <a href="{% url 'movie_list' %}" class="btn btn-link">Back to Movie List</a>
-                </div>
-            </div>
+        <div class="detail-meta">
+          <p><strong>Release Date:</strong> {{ animation.release_date }}</p>
+          <p><strong>Rating:</strong> {{ animation.overall_rating }} /10</p>
+          <p><strong>Genres:</strong>
+            {% for genre in genres %}{{ genre.genre_name }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}
+          </p>
+          <p><strong>Age Rating:</strong> {{ animation.age_rating.name }}</p>
+          <p><strong>Duration:</strong> {{ animation.get_duration }}</p>
+          <p><strong>Description:</strong> {{ animation.description }}</p>
+          {% if animation.ai_summary %}<p class="detail-ai"><strong>AI summary:</strong> {{ animation.ai_summary }}</p>{% endif %}
+          {% if animation.ai_tags %}<p class="detail-ai"><strong>AI tags:</strong> {{ animation.ai_tags|join:", " }}</p>{% endif %}
+          <p><strong>Language:</strong> {{ animation.language }}</p>
+          <p><strong>Country:</strong> {{ animation.country }}</p>
+          <p><strong>Directors:</strong>
+            {% for director in animation.directors.all %}{{ director.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          </p>
+          <p><strong>Stars:</strong>
+            {% for star in animation.stars.all %}{{ star.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          </p>
         </div>
+      </div>
+      <div class="col-lg-4">
+        {% include 'main/partials/_download_panel.html' %}
+        {% url 'animation_detail' animation.id as review_post_url %}
+        {% include 'main/partials/_reviews_panel.html' with post_url=review_post_url %}
+        <section class="detail-panel">
+          <h3 class="detail-panel-title">More Info</h3>
+          <p><strong>Views:</strong> {{ animation.view_count }}</p>
+          <a href="{% url 'animation_list' %}" class="btn btn-outline-light btn-sm">Back to Animation List</a>
+        </section>
+      </div>
     </div>
-</div>
-
+  </div>
+</section>
 {% endblock %}

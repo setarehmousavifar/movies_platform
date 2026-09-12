@@ -4,12 +4,13 @@ from collections import Counter
 
 from django.db.models import Count
 
-from main.models import FavoriteItem, Movie, Recommendation, UserGenrePreference
+from main.models import FavoriteItem, Movie, UserGenrePreference
 
 
 class RecommendationService:
     @classmethod
     def recommend_movies(cls, user, limit: int = 10):
+        """Return ranked movies. Read-only — no DB writes on the GET path."""
         if not user.is_authenticated:
             return list(
                 Movie.objects.order_by('-overall_rating', '-view_count')[:limit]
@@ -43,9 +44,4 @@ class RecommendationService:
             .order_by('-overlap', '-overall_rating', '-view_count')
             .distinct()[:limit]
         )
-        movies = list(qs)
-
-        for movie in movies:
-            Recommendation.objects.get_or_create(user=user, movie=movie)
-
-        return movies
+        return list(qs)

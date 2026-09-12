@@ -30,6 +30,53 @@ class DownloadLinkSerializer(serializers.ModelSerializer):
         fields = ('id', 'quality', 'file_size', 'download_url')
 
 
+class DownloadLinkPublicSerializer(serializers.ModelSerializer):
+    """Never expose raw download_url in catalog payloads."""
+
+    unlock_path = serializers.SerializerMethodField()
+    locked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DownloadLink
+        fields = ('id', 'quality', 'file_size', 'locked', 'unlock_path')
+
+    def get_locked(self, obj):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        return not EntitlementService.can_download(user)
+
+    def get_unlock_path(self, obj):
+        return f'/api/v1/downloads/{obj.pk}/'
+
+
+class CatalogTargetCreateSerializer(serializers.Serializer):
+    movie = serializers.PrimaryKeyRelatedField(
+        queryset=Movie.objects.all(), required=False, allow_null=True
+    )
+    series = serializers.PrimaryKeyRelatedField(
+        queryset=Series.objects.all(), required=False, allow_null=True
+    )
+    animation = serializers.PrimaryKeyRelatedField(
+        queryset=Animation.objects.all(), required=False, allow_null=True
+    )
+
+    def validate(self, attrs):
+        count = sum(attrs.get(k) is not None for k in ('movie', 'series', 'animation'))
+        if count != 1:
+            raise serializers.ValidationError(
+                'Provide exactly one of movie, series, or animation.'
+            )
+        return attrs
+
+
+class UpgradeRequestSerializer(serializers.Serializer):
+    note = serializers.CharField(required=False, allow_blank=True, max_length=500)
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
 class CatalogListSerializer(serializers.ModelSerializer):
     poster = serializers.SerializerMethodField()
 
@@ -90,18 +137,8 @@ class MovieDetailSerializer(MovieListSerializer):
         )
 
     def get_download_links(self, obj):
-        request = self.context.get('request')
-        user = getattr(request, 'user', None)
         links = obj.download_links.all()
-        data = DownloadLinkSerializer(links, many=True).data
-        if not EntitlementService.can_download(user):
-            for item in data:
-                item['download_url'] = None
-                item['locked'] = True
-        else:
-            for item in data:
-                item['locked'] = False
-        return data
+        return DownloadLinkPublicSerializer(links, many=True, context=self.context).data
 
 
 class SeriesDetailSerializer(SeriesListSerializer):
@@ -193,6 +230,14 @@ class ReviewCreateSerializer(serializers.Serializer):
         queryset=Animation.objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.IntegerField(required=False, allow_null=True)
+
+    def validate(self, attrs):
+        count = sum(attrs.get(k) is not None for k in ('movie', 'series', 'animation'))
+        if count != 1:
+            raise serializers.ValidationError(
+                'Provide exactly one of movie, series, or animation.'
+            )
+        return attrs
 
 
 class FavoriteItemSerializer(serializers.ModelSerializer):

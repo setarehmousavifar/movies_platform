@@ -1,29 +1,31 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Update Subscription · Movie Platform{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h1 class="text-center">Update Subscription</h1>
-            <form method="post" class="p-4 border rounded bg-light shadow-sm">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="id_subscription_type" class="form-label">Subscription Type</label>
-                    {{ form.subscription_type }}
-                </div>
-                <div class="mb-3">
-                    <label for="id_end_date" class="form-label">End Date</label>
-                    {{ form.end_date }}
-                </div>
-                {% if form.errors %}
-                    <div class="alert alert-danger">{{ form.errors }}</div>
-                {% endif %}
-                <div class="d-flex justify-content-center mt-4">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </form>
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h1 class="page-title text-center">Update Subscription</h1>
+      <form method="post" class="auth-panel">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_subscription_type" class="form-label">Subscription Type</label>
+          {{ form.subscription_type }}
         </div>
+        <div class="mb-3">
+          <label for="id_end_date" class="form-label">End Date</label>
+          {{ form.end_date }}
+        </div>
+        {% if form.errors %}
+        <div class="alert alert-danger">{{ form.errors }}</div>
+        {% endif %}
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 {% endblock %}

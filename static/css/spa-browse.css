@@ -1,0 +1,311 @@
+/* JWT browse SPA — extends cinematic tokens from style.css */
+.spa-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.spa-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  background: rgba(14, 18, 24, 0.9);
+  border-bottom: 1px solid var(--line);
+}
+
+.spa-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+
+.spa-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--paper);
+}
+
+.spa-brand span {
+  color: var(--amber);
+}
+
+.spa-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  flex: 1 1 auto;
+}
+
+.spa-nav a {
+  color: var(--mist);
+  font-size: 0.92rem;
+}
+
+.spa-nav a.is-active,
+.spa-nav a:hover {
+  color: var(--paper);
+}
+
+.spa-auth {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spa-auth .spa-user {
+  color: var(--mist);
+  font-size: 0.85rem;
+}
+
+.spa-main {
+  flex: 1 1 auto;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+.spa-footer {
+  border-top: 1px solid var(--line);
+  text-align: center;
+  padding: 1rem;
+  color: var(--mist);
+  font-size: 0.85rem;
+}
+
+.spa-footer code {
+  color: var(--amber);
+}
+
+.spa-hero {
+  margin-bottom: 1.5rem;
+}
+
+.spa-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin: 0 0 0.4rem;
+}
+
+.spa-hero p {
+  color: var(--mist);
+  max-width: 40rem;
+  margin: 0;
+}
+
+.spa-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+}
+
+.spa-toolbar input,
+.spa-toolbar select,
+.spa-login input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.75rem;
+  min-width: 10rem;
+}
+
+.spa-toolbar input:focus,
+.spa-login input:focus {
+  outline: 2px solid var(--amber);
+  outline-offset: 1px;
+}
+
+.spa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.spa-card {
+  background: var(--ink-elevated);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.spa-card:hover,
+.spa-card:focus-within {
+  transform: translateY(-3px);
+  border-color: rgba(224, 160, 69, 0.45);
+}
+
+.spa-card a {
+  color: inherit;
+  display: block;
+}
+
+.spa-card img,
+.spa-card-ph {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+  background: linear-gradient(135deg, #1a2230, #0a0d12);
+}
+
+.spa-card-body {
+  padding: 0.7rem 0.75rem 0.9rem;
+}
+
+.spa-card-body h3 {
+  font-size: 0.95rem;
+  margin: 0 0 0.25rem;
+  font-family: var(--font-display);
+}
+
+.spa-card-body p {
+  margin: 0;
+  color: var(--mist);
+  font-size: 0.8rem;
+}
+
+.spa-detail {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  gap: 1.25rem;
+  background: var(--ink-elevated);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 1.25rem;
+}
+
+.spa-detail img,
+.spa-detail-ph {
+  width: 100%;
+  border-radius: var(--radius);
+  background: #111;
+  min-height: 280px;
+  object-fit: cover;
+}
+
+.spa-detail h1 {
+  font-family: var(--font-display);
+  margin: 0 0 0.5rem;
+}
+
+.spa-detail-meta {
+  color: var(--mist);
+  font-size: 0.92rem;
+}
+
+.spa-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.spa-login {
+  max-width: 22rem;
+  margin: 2rem auto;
+  background: var(--ink-elevated);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 1.5rem;
+}
+
+.spa-login h1 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin: 0 0 0.75rem;
+}
+
+.spa-login label {
+  display: block;
+  color: var(--mist);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.spa-login .field {
+  margin-bottom: 0.85rem;
+}
+
+.spa-login input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.spa-empty,
+.spa-loading,
+.spa-error {
+  color: var(--mist);
+  padding: 1rem 0;
+}
+
+.spa-error {
+  color: #f0a0a0;
+}
+
+.spa-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  background: var(--ink-elevated);
+  border: 1px solid var(--line);
+  color: var(--paper);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  z-index: 50;
+  max-width: 20rem;
+}
+
+.spa-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.spa-btn-primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.spa-btn-primary:hover {
+  background: var(--amber-deep);
+}
+
+.spa-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.spa-pager {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  align-items: center;
+}
+
+@media (max-width: 720px) {
+  .spa-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .spa-auth {
+    width: 100%;
+    margin-left: 0;
+  }
+}

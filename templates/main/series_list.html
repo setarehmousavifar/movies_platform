@@ -1,64 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Series · Movie Platform{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h1>Series</h1>
-
-<!-- فرم جستجوی پیشرفته -->
-<form action="{% url 'series_advanced_search' %}" method="get" class="row g-3 mb-4">
-    <div class="col-md-4">
-        <input type="text" name="query" placeholder="Search by title or description" class="form-control" value="{{ query }}">
-    </div>
-    <div class="col-md-3">
-        <select name="genre" class="form-select">
-            <option value="">-- All Genres --</option>
-            {% for genre in genres %}
-            <option value="{{ genre.id }}" {% if genre.id|stringformat:"s" == request.GET.genre %}selected{% endif %}>
-                {{ genre.genre_name }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-2">
-        <select name="rating" class="form-select">
-            <option value="">All Ratings</option>
-            <option value="9" {% if request.GET.rating == "9" %}selected{% endif %}>Above 9</option>
-            <option value="8" {% if request.GET.rating == "8" %}selected{% endif %}>Above 8</option>
-            <option value="7" {% if request.GET.rating == "7" %}selected{% endif %}>Above 7</option>
-            <option value="6" {% if request.GET.rating == "6" %}selected{% endif %}>Above 6</option>
-            <option value="5" {% if request.GET.rating == "5" %}selected{% endif %}>Above 5</option>
-            <option value="4" {% if request.GET.rating == "4" %}selected{% endif %}>Below 5</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select name="sort_by" class="form-select">
-            <option value="">Sort By</option>
-            <option value="newest" {% if request.GET.sort_by == "newest" %}selected{% endif %}>Newest</option>
-            <option value="popular" {% if request.GET.sort_by == "popular" %}selected{% endif %}>Most Popular</option>
-            <option value="release_year" {% if request.GET.sort_by == "release_year" %}selected{% endif %}>Release Year</option>
-        </select>
-    </div>
-    <div class="col-md-12">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-</form>
-
-<!-- لیست سزیال ها -->
-    <div class="row">
-        {% for serie in series %}
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <img src="{{ serie.get_poster }}" alt="{{ serie.title }} poster" style="width: 150px; height: auto;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ serie.title }}</h5>
-                    <p class="card-text">{{ serie.get_years }}</p>
-                    <p class="card-text">{{ serie.status }}</p>
-                    <a href="{% url 'series_detail' serie.id %}" class="btn btn-primary">View Details</a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+<div class="container py-4">
+  <h1 class="page-title">Series</h1>
+  {% url 'series_advanced_search' as filter_action %}
+  {% include 'main/partials/_catalog_filters.html' with action=filter_action %}
+  <div class="row">
+    {% for serie in series %}
+      {% url 'series_detail' serie.id as item_url %}
+      {% include 'main/partials/_poster_card.html' with title=serie.title url=item_url poster=serie.get_poster meta=serie.get_years col_class='col-md-4 col-sm-6' %}
+    {% empty %}
+    <p class="detail-muted">No series found.</p>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

@@ -1,81 +1,52 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Profile · Movie Platform{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h1 class="text-center">Profile</h1>
-            <form method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light shadow-sm">
-                {% csrf_token %}
-
-                <!-- Toast message -->
-                {% if messages %}
-                <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1055;">
-                    {% for message in messages %}
-                    <div class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
-                        <div class="toast-header bg-success text-white">
-                            <strong class="me-auto">Notification</strong>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                        <div class="toast-body">
-                            {{ message }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                
-                <!-- Profile Form -->
-                <div class="mb-3">
-                    <label for="first_name" class="form-label">First Name</label>
-                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ form.first_name.value }}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="last_name" class="form-label">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ form.last_name.value }}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-control" value="{{ form.email.value }}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="phone_number" class="form-label">Phone Number</label>
-                    <input type="text" id="phone_number" name="phone_number" class="form-control" value="{{ form.phone_number.value }}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="profile_picture" class="form-label">Profile Picture</label>
-                    <input type="file" id="profile_picture" name="profile_picture" class="form-control">
-                    {% if form.instance.profile_picture %}
-                        <img src="{{ form.instance.profile_picture.url }}" alt="Profile Picture" class="img-fluid mt-3" width="150">
-                    {% endif %}
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
-                </div>
-            </form>
-
-            <div class="text-center mt-3">
-                <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
-            </div>
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h1 class="page-title text-center">Your Profile</h1>
+      <form method="post" enctype="multipart/form-data" class="auth-panel">
+        {% csrf_token %}
+        <div class="row mb-3">
+          <div class="col">
+            <label for="first_name" class="form-label">First Name</label>
+            <input type="text" id="first_name" name="first_name" class="form-control" value="{{ form.first_name.value|default:'' }}" autocomplete="given-name">
+          </div>
+          <div class="col">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input type="text" id="last_name" name="last_name" class="form-control" value="{{ form.last_name.value|default:'' }}" autocomplete="family-name">
+          </div>
         </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" name="username" class="form-control" value="{{ form.username.value|default:'' }}" autocomplete="username">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" autocomplete="email">
+        </div>
+        <div class="mb-3">
+          <label for="phone_number" class="form-label">Phone</label>
+          <input type="text" id="phone_number" name="phone_number" class="form-control" value="{{ form.phone_number.value|default:'' }}" autocomplete="tel">
+        </div>
+        <div class="mb-3">
+          <label for="profile_picture" class="form-label">Profile Picture</label>
+          <input type="file" id="profile_picture" name="profile_picture" class="form-control">
+          {% if form.instance.profile_picture %}
+          <img src="{{ form.instance.profile_picture.url }}" alt="Profile picture" class="img-fluid mt-3 rounded" width="150">
+          {% endif %}
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Update Profile</button>
+        </div>
+      </form>
+      <div class="text-center mt-3">
+        <a href="{% url 'home' %}" class="btn btn-outline-light btn-sm">Back to Home</a>
+      </div>
     </div>
+  </div>
 </div>
-
-<!-- JavaScript برای فعال کردن Toast -->
-<script>
-    // فعال کردن تمامی Toast‌ها
-    document.addEventListener('DOMContentLoaded', function () {
-        var toastElements = document.querySelectorAll('.toast');
-        toastElements.forEach(function (toastElement) {
-            var toast = new bootstrap.Toast(toastElement);
-            toast.show();
-        });
-    });
-</script>
 {% endblock %}

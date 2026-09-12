@@ -7,6 +7,10 @@ class BreakingAlertConsumer(AsyncJsonWebsocketConsumer):
     group_name = 'breaking_alerts'
 
     async def connect(self):
+        user = self.scope.get('user')
+        if user is None or user.is_anonymous or not user.is_authenticated:
+            await self.close(code=4401)
+            return
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
 

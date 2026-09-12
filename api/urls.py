@@ -3,11 +3,13 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     AnimationViewSet,
+    DownloadUnlockView,
     EnrichAnimationView,
     EnrichMovieView,
     EnrichSeriesView,
     FavoriteViewSet,
     GenreViewSet,
+    LogoutView,
     MeView,
     MovieViewSet,
     NotificationListView,
@@ -37,6 +39,7 @@ urlpatterns = [
     path('auth/register/', RegisterView.as_view(), name='api-register'),
     path('auth/token/', ThrottledTokenObtainPairView.as_view(), name='api-token'),
     path('auth/token/refresh/', ThrottledTokenRefreshView.as_view(), name='api-token-refresh'),
+    path('auth/logout/', LogoutView.as_view(), name='api-logout'),
     path('auth/me/', MeView.as_view(), name='api-me'),
     path('subscriptions/me/', SubscriptionMeView.as_view(), name='api-subscription-me'),
     path(
@@ -44,6 +47,7 @@ urlpatterns = [
         SubscriptionRequestUpgradeView.as_view(),
         name='api-subscription-request',
     ),
+    path('downloads/<int:pk>/', DownloadUnlockView.as_view(), name='api-download-unlock'),
     path('search/', SearchView.as_view(), name='api-search'),
     path('recommendations/', RecommendationView.as_view(), name='api-recommendations'),
     path('movies/<int:pk>/enrich/', EnrichMovieView.as_view(), name='api-movie-enrich'),

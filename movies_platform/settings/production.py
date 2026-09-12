@@ -1,8 +1,16 @@
 """Production settings — secrets must come from environment."""
 
+from django.core.exceptions import ImproperlyConfigured
+
 from .base import *  # noqa: F403
 
 DEBUG = False
+
+_INSECURE_DEFAULT = 'django-insecure-dev-only-do-not-use-in-production'
+if not SECRET_KEY or SECRET_KEY == _INSECURE_DEFAULT:  # noqa: F405
+    raise ImproperlyConfigured(
+        'DJANGO_SECRET_KEY must be set to a strong unique value in production.'
+    )
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
@@ -15,5 +23,4 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'same-origin'
 X_FRAME_OPTIONS = 'DENY'
 
-# WhiteNoise optional; collectstatic required behind reverse proxy
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'

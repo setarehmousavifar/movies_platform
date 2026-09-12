@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -146,6 +147,7 @@ def movie_detail(request, pk):
             'form': form,
             'reply_form': reply_form,
             'is_favorite': FavoriteService.is_favorite_movie(request.user, movie),
+            'is_watchlisted': WatchlistService.is_watchlist_movie(request.user, movie),
             'genres': movie.genres.all(),
             'download_links': DownloadLink.objects.filter(movie=movie),
             'can_download': EntitlementService.can_download(request.user),
@@ -174,6 +176,7 @@ def series_detail(request, pk):
             'form': form,
             'reply_form': reply_form,
             'is_favorite': FavoriteService.is_favorite_series(request.user, series),
+            'is_watchlisted': WatchlistService.is_watchlist_series(request.user, series),
             'genres': series.genres.all(),
             'download_links': DownloadLink.objects.filter(series=series),
             'can_download': EntitlementService.can_download(request.user),
@@ -202,6 +205,7 @@ def animation_detail(request, pk):
             'form': form,
             'reply_form': reply_form,
             'is_favorite': FavoriteService.is_favorite_animation(request.user, animation),
+            'is_watchlisted': WatchlistService.is_watchlist_animation(request.user, animation),
             'genres': animation.genres.all(),
             'download_links': DownloadLink.objects.filter(animation=animation),
             'can_download': EntitlementService.can_download(request.user),
@@ -209,25 +213,46 @@ def animation_detail(request, pk):
     )
 
 
+def _resolve_catalog_target(kind: str, pk: int):
+    kind = (kind or '').lower()
+    if kind == 'movie':
+        return {'movie': get_object_or_404(Movie, pk=pk)}
+    if kind == 'series':
+        return {'series': get_object_or_404(Series, pk=pk)}
+    if kind == 'animation':
+        return {'animation': get_object_or_404(Animation, pk=pk)}
+    raise Http404('Unknown catalog kind.')
+
+
+def _catalog_redirect(kind: str, pk: int):
+    if kind == 'movie':
+        return redirect('movie_detail', pk=pk)
+    if kind == 'series':
+        return redirect('series_detail', pk=pk)
+    return redirect('animation_detail', pk=pk)
+
+
 @login_required
 @require_POST
-def add_to_favorites(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
+def add_to_favorites(request, kind, pk):
+    target = _resolve_catalog_target(kind, pk)
     try:
-        FavoriteService.add_movie(request.user, movie)
-        messages.success(request, f'{movie.title} was added to your favorites.')
+        FavoriteService.add_item(request.user, **target)
+        title = next(iter(target.values())).title
+        messages.success(request, f'{title} was added to your favorites.')
     except DomainError as exc:
         messages.error(request, exc.message)
-    return redirect('favorites_list')
+    return _catalog_redirect(kind, pk)
 
 
 @login_required
 @require_POST
-def remove_from_favorites(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
+def remove_from_favorites(request, kind, pk):
+    target = _resolve_catalog_target(kind, pk)
     try:
-        FavoriteService.remove_movie(request.user, movie)
-        messages.success(request, f'{movie.title} was removed from your favorites.')
+        FavoriteService.remove_item(request.user, **target)
+        title = next(iter(target.values())).title
+        messages.success(request, f'{title} was removed from your favorites.')
     except DomainError as exc:
         messages.error(request, exc.message)
     return redirect('favorites_list')
@@ -237,6 +262,18 @@ def remove_from_favorites(request, movie_id):
 def favorites_list(request):
     favorites = FavoriteService.list_for(request.user)
     return render(request, 'main/favorites_list.html', {'favorites': favorites})
+
+
+@login_required
+def download_unlock(request, pk):
+    """Server-side unlock — never embed raw CDN URLs in templates for gated downloads."""
+    try:
+        EntitlementService.assert_can_download(request.user)
+    except DomainError as exc:
+        messages.error(request, exc.message)
+        return redirect('subscription')
+    link = get_object_or_404(DownloadLink, pk=pk)
+    return redirect(link.download_url)
 
 
 def search(request):
@@ -441,26 +478,28 @@ def top_series(request):
 
 @login_required
 @require_POST
-def add_to_watchlist(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
+def add_to_watchlist(request, kind, pk):
+    target = _resolve_catalog_target(kind, pk)
     try:
-        _, created = WatchlistService.add_movie(request.user, movie)
+        _, created = WatchlistService.add_item(request.user, **target)
+        title = next(iter(target.values())).title
         if created:
-            messages.success(request, f'{movie.title} was added to your watchlist.')
+            messages.success(request, f'{title} was added to your watchlist.')
         else:
-            messages.info(request, f'{movie.title} is already in your watchlist.')
+            messages.info(request, f'{title} is already in your watchlist.')
     except DomainError as exc:
         messages.error(request, exc.message)
-    return redirect('watchlist')
+    return _catalog_redirect(kind, pk)
 
 
 @login_required
 @require_POST
-def remove_from_watchlist(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
+def remove_from_watchlist(request, kind, pk):
+    target = _resolve_catalog_target(kind, pk)
     try:
-        WatchlistService.remove_movie(request.user, movie)
-        messages.success(request, f'{movie.title} was removed from your watchlist.')
+        WatchlistService.remove_item(request.user, **target)
+        title = next(iter(target.values())).title
+        messages.success(request, f'{title} was removed from your watchlist.')
     except DomainError as exc:
         messages.error(request, exc.message)
     return redirect('watchlist')
@@ -558,3 +597,8 @@ def mock_checkout(request):
     except DomainError as exc:
         messages.error(request, exc.message)
     return redirect('subscription')
+
+
+def spa_browse(request):
+    """Optional JWT browse client (portfolio). Main product remains SSR templates."""
+    return render(request, 'spa/browse.html')

@@ -23,20 +23,21 @@ urlpatterns = [
     path('subscription/mock-checkout/', views.mock_checkout, name='mock_checkout'),
 
     path('watchlist/', views.watchlist_view, name='watchlist'),
-    path('watchlist/add/<int:movie_id>/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('watchlist/add/<str:kind>/<int:pk>/', views.add_to_watchlist, name='add_to_watchlist'),
     path(
-        'watchlist/remove/<int:movie_id>/',
+        'watchlist/remove/<str:kind>/<int:pk>/',
         views.remove_from_watchlist,
         name='remove_from_watchlist',
     ),
 
-    path('favorites/add/<int:movie_id>/', views.add_to_favorites, name='add_to_favorites'),
+    path('favorites/add/<str:kind>/<int:pk>/', views.add_to_favorites, name='add_to_favorites'),
     path(
-        'favorites/remove/<int:movie_id>/',
+        'favorites/remove/<str:kind>/<int:pk>/',
         views.remove_from_favorites,
         name='remove_from_favorites',
     ),
     path('favorites/', views.favorites_list, name='favorites_list'),
+    path('downloads/<int:pk>/', views.download_unlock, name='download_unlock'),
     path('notifications/', views.notifications_list, name='notifications_list'),
     path(
         'notifications/<int:pk>/read/',
@@ -59,4 +60,5 @@ urlpatterns = [
 
     path('profile/', views.profile_view, name='profile'),
     path('register/', views.register_user, name='register'),
+    path('app/', views.spa_browse, name='spa_browse'),
 ]

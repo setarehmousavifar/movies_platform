@@ -1,0 +1,25 @@
+{# Expects: title, url, poster (optional), meta (optional), col_class (optional), loading (optional), fetchpriority (optional) #}
+<div class="{{ col_class|default:'col-md-3 col-sm-6' }}">
+  <article class="card mb-4 poster-card">
+    <a href="{{ url }}" class="poster-card-media" aria-label="{{ title }}">
+      {% if poster %}
+      <img
+        src="{{ poster }}"
+        alt="{{ title }} poster"
+        width="300"
+        height="220"
+        loading="{{ loading|default:'lazy' }}"
+        decoding="async"
+        {% if fetchpriority %}fetchpriority="{{ fetchpriority }}"{% endif %}
+      >
+      {% else %}
+      <div class="card-img-placeholder" aria-hidden="true"></div>
+      {% endif %}
+    </a>
+    <div class="card-body">
+      <h5 class="card-title"><a href="{{ url }}">{{ title }}</a></h5>
+      {% if meta %}<p class="card-text">{{ meta }}</p>{% endif %}
+      <a href="{{ url }}" class="btn btn-primary btn-sm">View</a>
+    </div>
+  </article>
+</div>

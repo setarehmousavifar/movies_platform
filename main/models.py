@@ -96,7 +96,7 @@ class CatalogItem(models.Model):
     overall_rating = models.DecimalField(
         max_digits=3, decimal_places=2, default=0.0, db_index=True, verbose_name='امتیاز کلی'
     )
-    country = models.CharField(max_length=100, verbose_name='کشور تولید')
+    country = models.CharField(max_length=100, db_index=True, verbose_name='کشور تولید')
     trailer_url = models.URLField(null=True, blank=True, verbose_name='لینک تریلر')
     trailer_video = models.FileField(
         upload_to='trailers/', null=True, blank=True, verbose_name='ویدئو تریلر'
@@ -179,6 +179,7 @@ class Series(CatalogItem):
     status = models.CharField(
         max_length=20,
         choices=[('ongoing', 'در حال پخش'), ('ended', 'تمام شده')],
+        db_index=True,
         verbose_name='وضعیت پخش',
     )
     # Denormalized counts; prefer season_list / episode counts via related models when present.
