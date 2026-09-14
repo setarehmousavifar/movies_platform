@@ -3,6 +3,7 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Avg, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -30,6 +31,16 @@ from .services import (
     WatchlistService,
 )
 
+CATALOG_PAGE_SIZE = 12
+
+
+def _paginate(request, queryset, per_page=CATALOG_PAGE_SIZE):
+    paginator = Paginator(queryset, per_page)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    query = request.GET.copy()
+    query.pop('page', None)
+    return page_obj, query.urlencode()
+
 
 def register_user(request):
     if request.method == 'POST':
@@ -42,7 +53,7 @@ def register_user(request):
             login(request, user)
             messages.success(request, 'Registration successful. Welcome!')
             return redirect('home')
-        messages.error(request, 'There was an error with your registration. Please try again.')
+        messages.error(request, 'Please fix the errors below and try again.')
     else:
         form = UserRegistrationForm()
     return render(request, 'main/register.html', {'form': form})
@@ -313,7 +324,7 @@ def movie_advanced_search(request):
     rating_filter = request.GET.get('rating', '')
     sort_by = request.GET.get('sort_by', '')
 
-    movies = Movie.objects.all()
+    movies = Movie.objects.all().order_by('-release_date', 'title')
     if query:
         movies = movies.filter(Q(title__icontains=query) | Q(description__icontains=query))
     if genre_id:
@@ -327,10 +338,17 @@ def movie_advanced_search(request):
     elif sort_by == 'release_year':
         movies = movies.order_by('-release_date')
 
+    page_obj, querystring = _paginate(request, movies.distinct())
     return render(
         request,
         'main/movie_list.html',
-        {'movies': movies.distinct(), 'query': query, 'genres': Genre.objects.all()},
+        {
+            'movies': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
+            'query': query,
+            'genres': Genre.objects.all(),
+        },
     )
 
 
@@ -340,7 +358,7 @@ def series_advanced_search(request):
     rating_filter = request.GET.get('rating', '')
     sort_by = request.GET.get('sort_by', '')
 
-    series = Series.objects.all()
+    series = Series.objects.all().order_by('-release_date', 'title')
     if query:
         series = series.filter(Q(title__icontains=query) | Q(description__icontains=query))
     if genre_id:
@@ -354,10 +372,17 @@ def series_advanced_search(request):
     elif sort_by == 'release_year':
         series = series.order_by('-start_year')
 
+    page_obj, querystring = _paginate(request, series.distinct())
     return render(
         request,
         'main/series_list.html',
-        {'series': series.distinct(), 'query': query, 'genres': Genre.objects.all()},
+        {
+            'series': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
+            'query': query,
+            'genres': Genre.objects.all(),
+        },
     )
 
 
@@ -367,7 +392,7 @@ def animation_advanced_search(request):
     rating_filter = request.GET.get('rating', '')
     sort_by = request.GET.get('sort_by', '')
 
-    animations = Animation.objects.all()
+    animations = Animation.objects.all().order_by('-release_date', 'title')
     if query:
         animations = animations.filter(
             Q(title__icontains=query) | Q(description__icontains=query)
@@ -381,11 +406,14 @@ def animation_advanced_search(request):
     elif sort_by == 'popular':
         animations = animations.order_by('-view_count')
 
+    page_obj, querystring = _paginate(request, animations.distinct())
     return render(
         request,
         'main/animation_list.html',
         {
-            'animations': animations.distinct(),
+            'animations': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
             'query': query,
             'genres': Genre.objects.all(),
         },
@@ -394,34 +422,58 @@ def animation_advanced_search(request):
 
 def movies_by_genre(request, genre_id):
     genre = get_object_or_404(Genre, pk=genre_id)
+    page_obj, querystring = _paginate(request, genre.movies.order_by('-release_date', 'title'))
     return render(
         request,
         'main/movies_by_genre.html',
-        {'genre': genre, 'movies': genre.movies.all()},
+        {
+            'genre': genre,
+            'movies': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
+        },
     )
 
 
 def movie_list(request):
+    page_obj, querystring = _paginate(request, Movie.objects.order_by('-release_date', 'title'))
     return render(
         request,
         'main/movie_list.html',
-        {'movies': Movie.objects.all(), 'genres': Genre.objects.all()},
+        {
+            'movies': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
+            'genres': Genre.objects.all(),
+        },
     )
 
 
 def series_list(request):
+    page_obj, querystring = _paginate(request, Series.objects.order_by('-release_date', 'title'))
     return render(
         request,
         'main/series_list.html',
-        {'series': Series.objects.all(), 'genres': Genre.objects.all()},
+        {
+            'series': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
+            'genres': Genre.objects.all(),
+        },
     )
 
 
 def animation_list(request):
+    page_obj, querystring = _paginate(request, Animation.objects.order_by('-release_date', 'title'))
     return render(
         request,
         'main/animation_list.html',
-        {'animations': Animation.objects.all(), 'genres': Genre.objects.all()},
+        {
+            'animations': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
+            'genres': Genre.objects.all(),
+        },
     )
 
 
@@ -430,7 +482,7 @@ def filter_movies(request):
     language = request.GET.get('language')
     min_rating = request.GET.get('min_rating')
 
-    movies = Movie.objects.all()
+    movies = Movie.objects.all().order_by('-release_date', 'title')
     if genre:
         movies = movies.filter(genres__genre_name__iexact=genre)
     if language:
@@ -443,11 +495,14 @@ def filter_movies(request):
         except (TypeError, ValueError):
             pass
 
+    page_obj, querystring = _paginate(request, movies.distinct())
     return render(
         request,
         'main/filter_movies.html',
         {
-            'movies': movies.distinct(),
+            'movies': page_obj,
+            'page_obj': page_obj,
+            'querystring': querystring,
             'genres': Genre.objects.all(),
             'selected_genre': genre,
             'selected_language': language,

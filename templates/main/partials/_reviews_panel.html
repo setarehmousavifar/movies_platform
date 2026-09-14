@@ -1,18 +1,26 @@
 {# Expects: reviews, form, reply_form, post_url #}
-<section class="detail-panel">
-  <h3 class="detail-panel-title">Reviews</h3>
+<section class="detail-panel" aria-labelledby="reviews-title">
+  <h3 class="detail-panel-title" id="reviews-title">Reviews</h3>
   {% for review in reviews %}
   <div class="review-box">
     <p><strong>{{ review.user.username }}</strong> says:</p>
     <p>{{ review.review_text }}</p>
     <p>Rating: {{ review.rating }} / 10</p>
     <p class="detail-muted"><small>Posted on {{ review.review_date }}</small></p>
-    <form method="post" action="{{ post_url }}">
-      {% csrf_token %}
-      {{ reply_form.as_p }}
-      <input type="hidden" name="review_id" value="{{ review.id }}">
-      <button type="submit" name="reply" class="btn btn-secondary btn-sm">Reply</button>
-    </form>
+    {% if user.is_authenticated %}
+    <details class="reply-compose mt-2">
+      <summary class="detail-muted">Reply</summary>
+      <form method="post" action="{{ post_url }}" class="mt-2">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label class="form-label visually-hidden" for="reply-{{ review.id }}">Reply text</label>
+          <textarea id="reply-{{ review.id }}" name="reply_text" class="form-control" rows="3" required placeholder="Write a reply…"></textarea>
+        </div>
+        <input type="hidden" name="review_id" value="{{ review.id }}">
+        <button type="submit" name="reply" class="btn btn-secondary btn-sm">Post reply</button>
+      </form>
+    </details>
+    {% endif %}
     {% for reply in review.replies.all %}
     <div class="reply-box">
       <p><strong>{{ reply.user.username }}</strong> replied:</p>
@@ -25,10 +33,26 @@
   <p class="detail-muted">No reviews yet.</p>
   {% endfor %}
 
+  {% if user.is_authenticated %}
   <h3 class="detail-panel-title mt-3">Add a Review</h3>
   <form method="post" action="{{ post_url }}" class="review-compose">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.rating.id_for_label }}">Rating (1–10)</label>
+      {{ form.rating }}
+      {% if form.rating.errors %}<div class="text-danger small">{{ form.rating.errors }}</div>{% endif %}
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.review_text.id_for_label }}">Review</label>
+      {{ form.review_text }}
+      {% if form.review_text.errors %}<div class="text-danger small">{{ form.review_text.errors }}</div>{% endif %}
+    </div>
     <button type="submit" name="review" class="btn btn-primary">Post Review</button>
   </form>
+  {% else %}
+  <p class="detail-muted mt-3"><a href="{% url 'login' %}">Log in</a> to leave a review.</p>
+  {% endif %}
 </section>

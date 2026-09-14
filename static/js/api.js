@@ -136,6 +136,7 @@
         toast(successLabel || 'Saved.', 'success');
         if (btn) {
           btn.dataset._label = listPath.indexOf('favorite') >= 0 ? 'Remove from Favorites' : 'Remove from Watchlist';
+          btn.setAttribute('aria-pressed', 'true');
         }
         var nextAction = form.action.replace('/add/', '/remove/');
         form.action = nextAction;
@@ -150,6 +151,7 @@
           toast('Removed.', 'success');
           if (btn) {
             btn.dataset._label = listPath.indexOf('favorite') >= 0 ? 'Add to Favorites' : 'Add to Watchlist';
+            btn.setAttribute('aria-pressed', 'false');
           }
           form.action = form.action.replace('/remove/', '/add/');
           if (form.closest('.list-group-item')) {

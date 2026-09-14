@@ -255,7 +255,6 @@ main {
 
 .card img {
   width: 100% !important;
-  height: 220px;
   object-fit: cover;
   display: block;
   background: #0a0d12;
@@ -313,8 +312,10 @@ main {
 }
 
 .card-img-placeholder {
-  height: 220px;
+  height: 100%;
+  min-height: 220px;
   background: linear-gradient(135deg, #1a2230, #0a0d12);
+  aspect-ratio: 2 / 3;
 }
 
 .poster-card {
@@ -344,13 +345,20 @@ main {
 .poster-card-media {
   display: block;
   overflow: hidden;
+  aspect-ratio: 2 / 3;
 }
 
 .poster-card-media img {
   width: 100%;
-  height: 220px;
+  height: 100%;
   object-fit: cover;
   transition: transform 0.35s var(--ease);
+}
+
+.catalog-kicker {
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: var(--mist);
 }
 
 .poster-card:hover .poster-card-media img,
@@ -396,12 +404,26 @@ main {
   gap: 0.75rem;
 }
 
-.empty-state {
+.catalog-pagination {
+  margin-top: 1.5rem;
+}
+
+.catalog-pagination .page-link {
+  background: var(--ink-elevated);
+  border-color: var(--line);
+  color: var(--paper);
+}
+
+.catalog-pagination .page-link:hover {
+  background: rgba(224, 160, 69, 0.15);
+  border-color: var(--amber);
+  color: var(--paper);
+}
+
+.catalog-pagination .page-item.disabled .page-link {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--line);
   color: var(--mist);
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  text-align: center;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -576,12 +598,6 @@ main {
 }
 
 @media (max-width: 768px) {
-  .card img,
-  .poster-card-media img,
-  .card-img-placeholder {
-    height: 180px;
-  }
-
   .home-hero {
     padding-top: 2rem;
   }

@@ -1,39 +1,44 @@
 {% extends "admin/index.html" %}
-{% load i18n %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/mp_dashboard.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="module mp-dashboard" style="margin-bottom: 1.5rem;">
+<section class="module mp-dashboard">
   <h2>Operations snapshot</h2>
-  <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin:0.75rem 0 1rem;">
-    <div class="mp-stat" style="min-width:8rem;padding:0.75rem 1rem;background:var(--darkened-bg,#f8f8f8);border-radius:6px;">
-      <div style="font-size:1.4rem;font-weight:700;">{{ mp_movie_count }}</div>
+  <div class="mp-dashboard-stats">
+    <div class="mp-stat">
+      <div class="mp-stat-value">{{ mp_movie_count }}</div>
       <div>Movies</div>
     </div>
-    <div class="mp-stat" style="min-width:8rem;padding:0.75rem 1rem;background:var(--darkened-bg,#f8f8f8);border-radius:6px;">
-      <div style="font-size:1.4rem;font-weight:700;">{{ mp_series_count }}</div>
+    <div class="mp-stat">
+      <div class="mp-stat-value">{{ mp_series_count }}</div>
       <div>Series</div>
     </div>
-    <div class="mp-stat" style="min-width:8rem;padding:0.75rem 1rem;background:var(--darkened-bg,#f8f8f8);border-radius:6px;">
-      <div style="font-size:1.4rem;font-weight:700;">{{ mp_animation_count }}</div>
+    <div class="mp-stat">
+      <div class="mp-stat-value">{{ mp_animation_count }}</div>
       <div>Animations</div>
     </div>
-    <div class="mp-stat" style="min-width:8rem;padding:0.75rem 1rem;background:var(--darkened-bg,#f8f8f8);border-radius:6px;">
-      <div style="font-size:1.4rem;font-weight:700;">{{ mp_active_premium }}</div>
+    <div class="mp-stat">
+      <div class="mp-stat-value">{{ mp_active_premium }}</div>
       <div>Active premium</div>
     </div>
-    <div class="mp-stat" style="min-width:8rem;padding:0.75rem 1rem;background:var(--darkened-bg,#f8f8f8);border-radius:6px;">
-      <div style="font-size:1.4rem;font-weight:700;">{{ mp_unread_notifications }}</div>
+    <div class="mp-stat">
+      <div class="mp-stat-value">{{ mp_unread_notifications }}</div>
       <div>Unread alerts</div>
     </div>
-    <div class="mp-stat" style="min-width:8rem;padding:0.75rem 1rem;background:var(--darkened-bg,#f8f8f8);border-radius:6px;">
-      <div style="font-size:1.4rem;font-weight:700;">{{ mp_unenriched_count }}</div>
+    <div class="mp-stat">
+      <div class="mp-stat-value">{{ mp_unenriched_count }}</div>
       <div>Need AI enrich</div>
     </div>
   </div>
 
-  <h3 style="margin-top:0.5rem;">Recent premium upgrade requests</h3>
+  <h3>Recent premium upgrade requests</h3>
   {% if mp_upgrade_requests %}
-  <table style="width:100%;">
+  <table class="mp-dashboard-table">
     <thead>
       <tr>
         <th>When</th>
@@ -57,7 +62,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <p style="margin-top:0.5rem;">
+  <p class="mp-dashboard-links">
     <a href="{% url 'admin:main_auditlog_changelist' %}?action__exact=subscription.upgrade_requested">View all upgrade requests</a>
     ·
     <a href="{% url 'admin:main_notification_changelist' %}?is_read__exact=0">Unread notifications</a>

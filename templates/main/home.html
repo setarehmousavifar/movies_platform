@@ -7,7 +7,7 @@
 <section class="home-hero">
   <div class="container">
     <div class="home-hero-inner">
-      <p class="mb-2"><span class="reel-spinner" aria-hidden="true"></span><span class="text-uppercase" style="letter-spacing:0.12em;font-size:0.75rem;color:var(--mist);">Catalog</span></p>
+      <p class="mb-2"><span class="reel-spinner" aria-hidden="true"></span><span class="text-uppercase catalog-kicker">Catalog</span></p>
       <h1 class="brand-mark">Movie <em>Platform</em></h1>
       <p>Browse films, series, and animations — search smarter, get recommendations, and unlock premium downloads.</p>
       <div class="hero-actions">
@@ -29,7 +29,7 @@
       {% include 'main/partials/_poster_card.html' with title=movie.title url=item_url poster=movie.get_poster meta=movie.overall_rating %}
       {% endif %}
     {% empty %}
-    <p class="detail-muted">Browse and favorite titles to improve recommendations.</p>
+    <div class="col-12"><div class="empty-state">Browse and favorite titles to improve recommendations.</div></div>
     {% endfor %}
   </div>
 
@@ -42,6 +42,8 @@
       {% else %}
       {% include 'main/partials/_poster_card.html' with title=movie.title url=item_url poster=movie.get_poster meta=movie.release_date %}
       {% endif %}
+    {% empty %}
+    <div class="col-12"><div class="empty-state">No new movies yet.</div></div>
     {% endfor %}
   </div>
 
@@ -50,6 +52,8 @@
     {% for series in new_series %}
       {% url 'series_detail' series.id as item_url %}
       {% include 'main/partials/_poster_card.html' with title=series.title url=item_url poster=series.get_poster meta=series.release_date %}
+    {% empty %}
+    <div class="col-12"><div class="empty-state">No new series yet.</div></div>
     {% endfor %}
   </div>
 
@@ -58,6 +62,8 @@
     {% for animation in new_animations %}
       {% url 'animation_detail' animation.id as item_url %}
       {% include 'main/partials/_poster_card.html' with title=animation.title url=item_url poster=animation.get_poster meta=animation.release_date %}
+    {% empty %}
+    <div class="col-12"><div class="empty-state">No new animations yet.</div></div>
     {% endfor %}
   </div>
 
@@ -66,6 +72,8 @@
     {% for movie in popular_movies %}
       {% url 'movie_detail' movie.id as item_url %}
       {% include 'main/partials/_poster_card.html' with title=movie.title url=item_url poster=movie.get_poster meta=movie.view_count %}
+    {% empty %}
+    <div class="col-12"><div class="empty-state">No popular movies yet.</div></div>
     {% endfor %}
   </div>
 </div>

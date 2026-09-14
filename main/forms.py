@@ -80,7 +80,14 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['rating', 'review_text']
         labels = {'rating': 'Rating', 'review_text': 'Review Text'}
-        widgets = {'rating': forms.NumberInput(attrs={'min': 1, 'max': 10})}
+        widgets = {
+            'rating': forms.NumberInput(
+                attrs={'min': 1, 'max': 10, 'class': 'form-control', 'style': 'max-width:6rem'}
+            ),
+            'review_text': forms.Textarea(
+                attrs={'rows': 4, 'class': 'form-control', 'placeholder': 'Share your thoughts…'}
+            ),
+        }
 
     def clean_rating(self):
         rating = self.cleaned_data['rating']
@@ -93,7 +100,9 @@ class ReplyForm(forms.Form):
     """Nested reply stored as a child Review (Phase 1 — single threading model)."""
 
     reply_text = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        widget=forms.Textarea(
+            attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Write a reply…'}
+        ),
         label='Reply Text',
     )
 

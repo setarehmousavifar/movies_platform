@@ -244,7 +244,7 @@
     const item = await res.json();
     const genres = (item.genres || []).map((g) => g.genre_name || g).join(', ') || '—';
     const poster = item.poster
-      ? `<img src="${escapeHtml(item.poster)}" alt="" width="220" height="320" fetchpriority="high">`
+      ? `<img src="${escapeHtml(item.poster)}" alt="${escapeHtml(item.title)} poster" width="220" height="320" fetchpriority="high">`
       : `<div class="spa-detail-ph" aria-hidden="true"></div>`;
     main.innerHTML = `
       <article class="spa-detail">
@@ -263,48 +263,93 @@
       </article>`;
     const actions = document.getElementById('spa-detail-actions');
     if (!state.user) {
-      actions.innerHTML = `<a class="spa-btn spa-btn-primary" href="#/login">Log in to favorite</a>`;
+      actions.innerHTML = `<a class="spa-btn spa-btn-primary" href="#/login">Log in to save</a>`;
       return;
     }
     const singular = kind === 'movies' ? 'movie' : kind === 'series' ? 'series' : 'animation';
-    const favRes = await api('/favorites/');
-    let favoriteId = null;
-    if (favRes.ok) {
-      const favData = await favRes.json();
-      const list = favData.results || favData;
-      const match = list.find((f) => f[singular] === Number(id) || f[singular]?.id === Number(id));
-      favoriteId = match?.id || null;
+    await mountToggle(actions, '/favorites/', singular, id, 'favorite');
+    await mountToggle(actions, '/watchlist/', singular, id, 'watchlist');
+  }
+
+  async function mountToggle(container, listPath, singular, id, label) {
+    const res = await api(listPath);
+    let itemId = null;
+    if (res.ok) {
+      const data = await res.json();
+      const list = data.results || data;
+      const match = list.find((f) => Number(f[singular]) === Number(id));
+      itemId = match?.id || null;
     }
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'spa-btn spa-btn-primary';
-    btn.textContent = favoriteId ? 'Remove favorite' : 'Add favorite';
+    btn.className = label === 'favorite' ? 'spa-btn spa-btn-primary' : 'spa-btn';
+    const noun = label === 'favorite' ? 'favorite' : 'watchlist';
+    btn.textContent = itemId ? `Remove ${noun}` : `Add ${noun}`;
     btn.onclick = async () => {
       btn.disabled = true;
       try {
-        if (favoriteId) {
-          const del = await api(`/favorites/${favoriteId}/`, { method: 'DELETE' });
+        if (itemId) {
+          const del = await api(`${listPath}${itemId}/`, { method: 'DELETE' });
           if (!del.ok && del.status !== 204) throw new Error('remove failed');
-          favoriteId = null;
-          btn.textContent = 'Add favorite';
-          toast('Removed from favorites');
+          itemId = null;
+          btn.textContent = `Add ${noun}`;
+          toast(`Removed from ${noun}`);
         } else {
           const body = {};
           body[singular] = Number(id);
-          const add = await api('/favorites/', { method: 'POST', body: JSON.stringify(body) });
+          const add = await api(listPath, { method: 'POST', body: JSON.stringify(body) });
           if (!add.ok) throw new Error('add failed');
           const created = await add.json();
-          favoriteId = created.id;
-          btn.textContent = 'Remove favorite';
-          toast('Added to favorites');
+          itemId = created.id;
+          btn.textContent = `Remove ${noun}`;
+          toast(`Added to ${noun}`);
         }
       } catch {
-        toast('Favorite action failed');
+        toast(`${noun} action failed`);
       } finally {
         btn.disabled = false;
       }
     };
-    actions.appendChild(btn);
+    container.appendChild(btn);
+  }
+
+  async function renderEngagement(listPath, routeName, heading) {
+    setActiveNav(routeName);
+    if (!state.user) {
+      main.innerHTML = `
+        <div class="spa-hero"><h1>${heading}</h1><p>Requires JWT login.</p></div>
+        <a class="spa-btn spa-btn-primary" href="#/login">API login</a>`;
+      return;
+    }
+    main.innerHTML = `<div class="spa-hero"><h1>${heading}</h1><p>From <code>/api/v1${listPath}</code>.</p></div><p class="spa-loading">Loading…</p>`;
+    const res = await api(listPath);
+    if (!res.ok) {
+      main.innerHTML = `<p class="spa-error">Could not load ${heading.toLowerCase()} (${res.status}).</p>`;
+      return;
+    }
+    const data = await res.json();
+    const rows = data.results || data;
+    if (!rows.length) {
+      main.innerHTML = `
+        <div class="spa-hero"><h1>${heading}</h1></div>
+        <p class="spa-empty">No items yet. Open a title and add one.</p>`;
+      return;
+    }
+    const cards = await Promise.all(
+      rows.slice(0, 24).map(async (row) => {
+        const kind = row.movie ? 'movies' : row.series ? 'series' : 'animations';
+        const id = row.movie || row.series || row.animation;
+        const detailRes = await api(`/${kind}/${id}/`);
+        if (!detailRes.ok) {
+          return cardHtml({ id, title: `${kind} #${id}`, poster: null, overall_rating: null }, kind);
+        }
+        const item = await detailRes.json();
+        return cardHtml(item, kind);
+      })
+    );
+    main.innerHTML = `
+      <div class="spa-hero"><h1>${heading}</h1><p>From <code>/api/v1${listPath}</code>.</p></div>
+      <div class="spa-grid">${cards.join('')}</div>`;
   }
 
   async function renderSearch() {
@@ -372,10 +417,11 @@
     main.innerHTML = `
       <div class="spa-hero">
         <h1>API browse client</h1>
-        <p>Lightweight JWT demo for the resume: catalog, search, recommendations, and favorites against the same DRF backend. The main product remains server-rendered Django templates.</p>
+        <p>Lightweight JWT demo: catalog, search, recommendations, favorites, and watchlist on the same DRF backend. The main product remains SSR Django templates.</p>
       </div>
       <div class="spa-actions">
         <a class="spa-btn spa-btn-primary" href="#/movies">Browse movies</a>
+        <a class="spa-btn" href="#/watchlist">Watchlist</a>
         <a class="spa-btn" href="#/login">JWT login</a>
         <a class="spa-btn" href="${escapeHtml(cfg.siteHome || '/')}">Full SSR site</a>
       </div>`;
@@ -390,11 +436,13 @@
   async function route() {
     renderAuth();
     const parts = parseHash();
-    const [a, b, c] = parts;
+    const [a, b] = parts;
     if (!a) return renderHome();
     if (a === 'login') return renderLogin();
     if (a === 'search') return renderSearch();
     if (a === 'recommended') return renderRecommended();
+    if (a === 'watchlist') return renderEngagement('/watchlist/', 'watchlist', 'Watchlist');
+    if (a === 'favorites') return renderEngagement('/favorites/', 'favorites', 'Favorites');
     if (['movies', 'series', 'animations'].includes(a) && b && /^\d+$/.test(b)) {
       return renderDetail(a, b);
     }

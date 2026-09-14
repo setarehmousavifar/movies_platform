@@ -14,6 +14,7 @@
     <p class="detail-muted">No movies in this genre.</p>
     {% endfor %}
   </div>
+  {% include 'main/partials/_pagination.html' %}
   <a href="{% url 'genre_list' %}" class="btn btn-outline-light btn-sm mt-2">Back to Genres</a>
 </div>
 {% endblock %}

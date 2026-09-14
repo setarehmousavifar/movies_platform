@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block title %}Movies · Movie Platform{% endblock %}
+{% block og_title %}Movies · Movie Platform{% endblock %}
+{% block og_description %}Browse the movie catalog on Movie Platform.{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -16,5 +18,6 @@
     <p class="detail-muted">No movies found.</p>
     {% endfor %}
   </div>
+  {% include 'main/partials/_pagination.html' %}
 </div>
 {% endblock %}

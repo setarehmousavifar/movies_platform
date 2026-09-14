@@ -16,7 +16,7 @@
     el.setAttribute('role', 'alert');
     el.innerHTML =
       '<div class="d-flex"><div class="toast-body"></div>' +
-      '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+      '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>';
     el.querySelector('.toast-body').textContent = message;
     container.appendChild(el);
     setTimeout(function () {
