@@ -338,7 +338,7 @@ def movie_advanced_search(request):
     elif sort_by == 'release_year':
         movies = movies.order_by('-release_date')
 
-    page_obj, querystring = _paginate(request, movies.distinct())
+    page_obj, querystring = _paginate(request, movies.distinct().order_by('-release_date', 'title'))
     return render(
         request,
         'main/movie_list.html',
@@ -372,7 +372,7 @@ def series_advanced_search(request):
     elif sort_by == 'release_year':
         series = series.order_by('-start_year')
 
-    page_obj, querystring = _paginate(request, series.distinct())
+    page_obj, querystring = _paginate(request, series.distinct().order_by('-release_date', 'title'))
     return render(
         request,
         'main/series_list.html',
@@ -406,7 +406,7 @@ def animation_advanced_search(request):
     elif sort_by == 'popular':
         animations = animations.order_by('-view_count')
 
-    page_obj, querystring = _paginate(request, animations.distinct())
+    page_obj, querystring = _paginate(request, animations.distinct().order_by('-release_date', 'title'))
     return render(
         request,
         'main/animation_list.html',
@@ -495,7 +495,7 @@ def filter_movies(request):
         except (TypeError, ValueError):
             pass
 
-    page_obj, querystring = _paginate(request, movies.distinct())
+    page_obj, querystring = _paginate(request, movies.distinct().order_by('-release_date', 'title'))
     return render(
         request,
         'main/filter_movies.html',
